@@ -50,7 +50,7 @@ class StudentController extends Controller
             'tag_number' => $validatedData['rfid_tag'],
             'student_id' => $student->id, 
         ]);
-        return redirect()->route('students.index')->with('success', 'Student and RFID Tag registered successfully.');
+        return redirect()->route('students.index')->with('success', 'Student registered successfully.');
     }
 
     /**
@@ -95,7 +95,7 @@ class StudentController extends Controller
             'tag_number' => $validatedData['rfid_tag'],
         ]);
     
-        return redirect()->route('students.index')->with('success', 'Student and RFID Tag updated successfully.');
+        return redirect()->route('students.index')->with('success', 'Student updated successfully.');
     }
     
     /**
@@ -106,6 +106,6 @@ class StudentController extends Controller
 
         $student->delete();
     
-        return redirect()->route('students.index')->with('success', 'Student and RFID Tag deleted successfully.');
+        return redirect()->route('students.index')->with('success', 'Student deleted successfully.');
     }
 }

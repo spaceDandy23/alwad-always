@@ -110,6 +110,7 @@
         </table>
     </div>
 </div>
+<!-- Create Student Modal -->
 <div class="modal fade" id="createStudent" tabindex="-1" aria-labelledby="createStudentLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
