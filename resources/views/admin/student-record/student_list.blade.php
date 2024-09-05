@@ -19,6 +19,7 @@
                     <th scope="col">Middle Name</th>
                     <th scope="col">Grade</th>
                     <th scope="col">Section</th>
+                    <th scope="col">Subjects</th>
                     <th scope="col">Actions</th>
                 </tr>
             </thead>
@@ -31,6 +32,13 @@
                         <td>{{ $student->middle_name }}</td>
                         <td>{{ $student->grade }}</td>
                         <td>{{ $student->section }}</td>
+                        <td>
+                            <ul>
+                                @foreach($student->subjects as $subjects)
+                                    <li>{{ $subjects->name }}</li>
+                                @endforeach
+                            </ul>
+                        </td>
                         <td>
                             <a class="btn btn-warning" href="#" data-bs-toggle="modal" data-bs-target="#editStudent{{ $student->id }}">Edit</a>
                             <form action="{{ route('students.destroy', $student->id) }}" method="post" style="display:inline;">

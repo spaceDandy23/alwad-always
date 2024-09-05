@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Student;
-use App\Models\Attendance;
+use App\Models\StudentSubject;
 use Illuminate\Http\Request;
 
 class RfidController extends Controller
@@ -30,12 +30,13 @@ class RfidController extends Controller
         }
 
 
-        Attendance::create(['student_id' => $student->id,
-                             'present' => true]);
+        // Attendance::create(['student_id' => $student->id,
+        //                      'present' => true]);
 
 
         $studentCard = $this->generateHtmlStudent($student->tag->tag_number,$student->id,$student->first_name,
         $student->last_name,$student->grade);
+
         return back()->with([
             'success' => 'Student found',
             'student' => $studentCard

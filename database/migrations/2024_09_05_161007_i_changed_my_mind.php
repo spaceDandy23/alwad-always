@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('attendances', function (Blueprint $table) {
-            $table->id();
-            // $table->unsignedBigInteger('student_id'); 
-            // $table->boolean('present')->default(false); 
-            $table->timestamps();
-
+        Schema::table('attendances', function (Blueprint $table) {
+            $table->dropForeign(['student_id']);
+            $table->dropForeign(['subject_id']);
+            $table->dropColumn('student_id');
+            $table->dropColumn('subject_id');
         });
     }
 
@@ -25,6 +24,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('attendances');
+        Schema::table('attendances', function (Blueprint $table) {
+            //
+        });
     }
 };

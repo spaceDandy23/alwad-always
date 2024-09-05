@@ -12,7 +12,8 @@ class SubjectController extends Controller
      */
     public function index()
     {
-        //
+        $subjects = Subject::all(); 
+        return view("admin.subject-record.subjects_list", compact("subjects"));
     }
 
     /**
@@ -28,7 +29,9 @@ class SubjectController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        Subject::create($request->all());   
+
+        return redirect()->route("subjects.index")->with("success","Subject added");
     }
 
     /**
@@ -44,7 +47,7 @@ class SubjectController extends Controller
      */
     public function edit(Subject $subject)
     {
-        //
+        
     }
 
     /**
@@ -52,7 +55,8 @@ class SubjectController extends Controller
      */
     public function update(Request $request, Subject $subject)
     {
-        //
+        $subject->update($request->all());
+        return redirect()->route("subjects.index")->with("success","Subject updated");
     }
 
     /**
@@ -60,6 +64,8 @@ class SubjectController extends Controller
      */
     public function destroy(Subject $subject)
     {
-        //
+        $subject->delete();
+
+        return redirect()->route("subjects.index")->with("success","Subject deleted");
     }
 }

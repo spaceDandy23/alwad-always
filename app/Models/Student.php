@@ -15,7 +15,8 @@ class Student extends Model
     public function tag(){
         return $this->hasOne(Tag::class);
     }
-    public function attendances(){
-        return $this->hasMany(Attendance::class);
+    public function subjects()
+    {
+        return $this->belongsToMany(Subject::class);
     }
 }
