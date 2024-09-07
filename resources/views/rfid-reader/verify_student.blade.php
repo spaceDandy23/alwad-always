@@ -6,6 +6,7 @@
 
 @section('content')
 
+
 @include('partials.alerts')
 @if(session('student'))
     {!! session('student') !!}

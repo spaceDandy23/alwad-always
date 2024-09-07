@@ -53,9 +53,9 @@
                                                 @csrf
                                                 @method('PUT')
                                                 <label for="code_{{ $subject->id }}" class="form-label">Subject Code</label>
-                                                <input type="text" class="form-control" id="code_{{ $subject->id }}" name="code" value="{{ $subject->schedule }}" required>
+                                                <input type="text" class="form-control" id="code_{{ $subject->id }}" name="code" value="{{ $subject->schedule }}"  >
                                                 <label for="name_{{ $subject->id }}" class="form-label">Subject Name</label>
-                                                <input type="text" class="form-control" id="name_{{ $subject->id }}" name="name" value="{{ $subject->name }}" required>
+                                                <input type="text" class="form-control" id="name_{{ $subject->id }}" name="name" value="{{ $subject->name }}"  >
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                                     <button type="submit" class="btn btn-primary">Save Changes</button>
@@ -94,7 +94,6 @@
         </table>
     </div>
 </div>
-
 <!-- Create Subject Modal -->
 <div class="modal fade" id="createSubject" tabindex="-1" aria-labelledby="createSubjectLabel" aria-hidden="true">
     <div class="modal-dialog">

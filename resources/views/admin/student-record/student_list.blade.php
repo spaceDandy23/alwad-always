@@ -61,21 +61,21 @@
                                                 @csrf
                                                 @method('PUT')
                                                 <label for="rfid_tag_{{ $student->id }}" class="form-label">RFID Tag</label>
-                                                <input type="text" class="form-control" id="rfid_tag_{{ $student->id }}" name="rfid_tag" value="{{ $student->tag->tag_number }}" required>
+                                                <input type="text" class="form-control" id="rfid_tag_{{ $student->id }}" name="rfid_tag" value="{{ $student->tag->tag_number }}"   >
                                                 <label for="first_name_{{ $student->id }}" class="form-label">First Name</label>
-                                                <input type="text" class="form-control" id="first_name_{{ $student->id }}" name="first_name" value="{{ $student->first_name }}" required>
+                                                <input type="text" class="form-control" id="first_name_{{ $student->id }}" name="first_name" value="{{ $student->first_name }}"   >
                                                 <label for="last_name_{{ $student->id }}" class="form-label">Last Name</label>
-                                                <input type="text" class="form-control" id="last_name_{{ $student->id }}" name="last_name" value="{{ $student->last_name }}" required>
+                                                <input type="text" class="form-control" id="last_name_{{ $student->id }}" name="last_name" value="{{ $student->last_name }}"   >
                                                 <label for="middle_name_{{ $student->id }}" class="form-label">Middle Name</label>
                                                 <input type="text" class="form-control" id="middle_name_{{ $student->id }}" name="middle_name" value="{{ $student->middle_name }}">
                                                 <label for="grade_{{ $student->id }}" class="form-label">Grade</label>
-                                                <select class="form-select" id="grade_{{ $student->id }}" name="grade" required>
+                                                <select class="form-select" id="grade_{{ $student->id }}" name="grade"   >
                                                     @for($i = 7; $i <= 10; $i++)
                                                         <option value="{{ $i }}" {{ $student->grade == $i ? 'selected' : '' }}>{{ $i }}</option>
                                                     @endfor
                                                 </select>
                                                 <label for="section_{{ $student->id }}" class="form-label">Section</label>
-                                                <select class="form-select" id="section_{{ $student->id }}" name="section" required>
+                                                <select class="form-select" id="section_{{ $student->id }}" name="section"   >
                                                     @for($i = 1; $i <= 3; $i++)
                                                         <option value="{{ $i }}" {{ $student->section == $i ? 'selected' : '' }}>{{ $i }}</option>
                                                     @endfor

@@ -20,6 +20,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -43,5 +44,11 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    public function subjects(){
+        return $this->belongsToMany(Subject::class, 'subject_teacher');
+    }
+    public function isTeacher(){
+        return $this->role === 'teacher';
     }
 }

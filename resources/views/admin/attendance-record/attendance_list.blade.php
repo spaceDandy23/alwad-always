@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('page_title', 'Attendance Records')
+@section('page_title', 'Attendance')
 
 @section('content')
 
@@ -24,7 +24,6 @@
                             <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAttendanceModal{{ $attendance->id }}">
                                 Delete
                             </button>
-
                             <!-- Edit Attendance Modal -->
                             <div class="modal fade" id="editAttendance{{ $attendance->id }}" tabindex="-1" aria-labelledby="editAttendanceLabel{{ $attendance->id }}" aria-hidden="true">
                                 <div class="modal-dialog">
@@ -51,7 +50,6 @@
                                     </div>
                                 </div>
                             </div>
-
                             <!-- Delete Attendance Modal -->
                             <div class="modal fade" id="deleteAttendanceModal{{ $attendance->id }}" tabindex="-1" role="dialog" aria-labelledby="deleteAttendanceModalLabel{{ $attendance->id }}" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
