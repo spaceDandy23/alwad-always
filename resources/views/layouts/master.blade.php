@@ -17,8 +17,16 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                        
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
                 @if (Auth::check())
+                    <li class="nav-item">
+                        <a class="nav-link">Hello {{Auth::user()->name}}</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">Logout</a>
                     </li>

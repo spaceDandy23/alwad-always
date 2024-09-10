@@ -15,6 +15,7 @@
                 <tr>
                     <th scope="col">Name</th>
                     <th scope="col">Email</th>
+                    <th scope="col">Role</th>
                     <th scope="col">Actions</th>
                 </tr>
             </thead>
@@ -23,6 +24,7 @@
                     <tr>
                         <td>{{ $user->name }}</td>
                         <td>{{ $user->email }}</td>
+                        <td>{{ ucfirst($user->role) }}</td>
                         <td>
                             <a class="btn btn-warning" href="#" data-bs-toggle="modal" data-bs-target="#editUser{{ $user->id }}">Edit</a>
                             <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteUserModal{{ $user->id }}">
@@ -44,8 +46,8 @@
                                                 <input type="text" class="form-control" id="name_{{ $user->id }}" name="name" value="{{ $user->name }}" >
                                                 <label for="email_{{ $user->id }}" class="form-label">Email</label>
                                                 <input type="email" class="form-control" id="email_{{ $user->id }}" name="email" value="{{ $user->email }}" >
-                                                <label for="password_{{ $user->id }}" class="form-label">Role</label>
-                                                <input type="text" class="form-control" id="password_{{ $user->id }}" name="password" value="{{ $user->password }}" >
+                                                <label for="password_{{ $user->id }}" class="form-label">Password</label>
+                                                <input type="text" class="form-control" id="password_{{ $user->id }}" name="password" >
                                                 <label for="role_{{ $user->id }}" class="form-label">Role</label>
                                                 <select class="form-select" name="role" id="role_{{ $user->id }}">
                                                     @foreach ($roles as $role)
@@ -105,7 +107,7 @@
                     <input type="text" class="form-control" id="name" name="name" >
                     
                     <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" name="email" >
+                    <input type="text" class="form-control" id="email" name="email" >
 
                     <label for="password" class="form-label">Password</label>
                     <input type="password" class="form-control" id="password" name="password" >

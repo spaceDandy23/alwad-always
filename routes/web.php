@@ -1,10 +1,11 @@
 <?php
 
-use App\Http\Controllers\AttendanceController;
+// use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RfidController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -24,7 +25,11 @@ Route::resource('subjects',SubjectController::class);
 //RFID Reader
 Route::get('read',[RfidController::class, 'index'])->name('rfid-reader.index'); 
 Route::post('read/verify',[RfidController::class,'verify'])->name('rfid-reader.verify');
+//Teacher User
+Route::get('class',[TeacherController::class,'index'])->name('class.index');
+Route::put('class/{status}',[TeacherController::class,'editStatus'])->name('class.update');
 
+//Authentication
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login.index');
 Route::post('/login', [AuthController::class, 'login'])->name('login.auth');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

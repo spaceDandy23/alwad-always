@@ -29,7 +29,12 @@ class SubjectController extends Controller
      */
     public function store(Request $request)
     {
-        Subject::create($request->all());   
+        $validatedData = $request->validate(
+                        ['schedule' => 'required|string|max:255',
+                            'name' => 'required|string|max:255|unique:subjects,name'
+                            ]);
+
+        Subject::create($validatedData);
 
         return redirect()->route("subjects.index")->with("success","Subject added");
     }
@@ -55,6 +60,11 @@ class SubjectController extends Controller
      */
     public function update(Request $request, Subject $subject)
     {
+        $request->validate(
+                ['schedule' => 'required|string|max:255',
+                'name' => 'required|string|max:255|unique:subjects,name, ' . $subject->id,
+                ]);
+
         $subject->update($request->all());
         return redirect()->route("subjects.index")->with("success","Subject updated");
     }

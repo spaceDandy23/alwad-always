@@ -34,8 +34,8 @@
                         <td>{{ $student->section }}</td>
                         <td>
                             <ul>
-                                @foreach($student->subjects as $subjects)
-                                    <li>{{ $subjects->name }}</li>
+                                @foreach($student->subjects as $subject)
+                                    <li>{{ $subject->name }}</li>
                                 @endforeach
                             </ul>
                         </td>

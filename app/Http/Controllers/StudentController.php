@@ -30,6 +30,7 @@ class StudentController extends Controller
      */
     public function store(Request $request)
     {
+
      
         $validatedData = $request->validate([
             'first_name' => 'required|string|max:255',

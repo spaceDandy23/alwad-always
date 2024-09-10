@@ -52,8 +52,8 @@
                                             <form action="{{ route('subjects.update', $subject->id) }}" method="post">
                                                 @csrf
                                                 @method('PUT')
-                                                <label for="code_{{ $subject->id }}" class="form-label">Subject Code</label>
-                                                <input type="text" class="form-control" id="code_{{ $subject->id }}" name="code" value="{{ $subject->schedule }}"  >
+                                                <label for="code_{{ $subject->id }}" class="form-label">Subject Schedule</label>
+                                                <input type="text" class="form-control" id="code_{{ $subject->id }}" name="schedule" value="{{ $subject->schedule }}"  >
                                                 <label for="name_{{ $subject->id }}" class="form-label">Subject Name</label>
                                                 <input type="text" class="form-control" id="name_{{ $subject->id }}" name="name" value="{{ $subject->name }}"  >
                                                 <div class="modal-footer">
@@ -105,8 +105,8 @@
             <div class="modal-body">
                 <form action="{{ route('subjects.store') }}" method="post">
                     @csrf
-                    <label for="code" class="form-label">Subject Schedule</label>
-                    <input type="text" class="form-control" id="code" name="schedule">
+                    <label for="schedule" class="form-label">Subject Schedule</label>
+                    <input type="text" class="form-control" id="schedule" name="schedule">
                     <label for="name" class="form-label">Subject Name</label>
                     <input type="text" class="form-control" id="name" name="name">
                     <div class="modal-footer">

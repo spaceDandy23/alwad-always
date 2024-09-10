@@ -30,8 +30,6 @@ class RfidController extends Controller
         }
 
 
-        // Attendance::create(['student_id' => $student->id,
-        //                      'present' => true]);
 
 
         $studentCard = $this->generateHtmlStudent($student->tag->tag_number,$student->id,$student->first_name,

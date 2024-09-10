@@ -31,8 +31,16 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        User::create($request->all());
-
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,',
+            'password'=> 'required|string|min:8',
+        ]);
+        User::create([
+                        'name' => $validatedData['name'],
+                        'email' => $validatedData['email'],
+                        'password' => Hash::make($validatedData['password']),   
+                    ]);
         return redirect()->route('users.index')->with(['success' => 'User added']);
     }
 
@@ -56,8 +64,18 @@ class UserController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, User $user)
-    {
-        $user->update($request->input('password'));
+    { 
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email'=> 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'password'=> 'required|string|min:8',
+        ]);
+
+        $user->update([
+            'name' => $validatedData['name'],
+            'email' => $validatedData['email'],
+            'password' => Hash::make($validatedData['password'])
+        ]);
         return redirect()->route('users.index')->with(['success' => 'User Edited']);
     }
 
