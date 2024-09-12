@@ -23,11 +23,13 @@ Route::resource('users', UserController::class);
 //CRUD schedule
 Route::resource('subjects',SubjectController::class);
 //RFID Reader
-Route::get('read',[RfidController::class, 'index'])->name('rfid-reader.index'); 
-Route::post('read/verify',[RfidController::class,'verify'])->name('rfid-reader.verify');
+Route::get('read',[RfidController::class,'index'])->name('rfid-reader.index'); 
+Route::post('read/{subjectID}',[RfidController::class,'showSubject'])->name('rfid-reader-subject.index'); 
+Route::get('read/{subjectID}',[RfidController::class,'showSubject']); 
+Route::post('read/student/{verifyStudent}',[RfidController::class,'verify'])->name('rfid-reader.verify');
 //Teacher User
 Route::get('class',[TeacherController::class,'index'])->name('class.index');
-Route::put('class/{status}',[TeacherController::class,'editStatus'])->name('class.update');
+Route::put('class/{studentID}',[TeacherController::class,'editStatus'])->name('class.update');
 
 //Authentication
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login.index');

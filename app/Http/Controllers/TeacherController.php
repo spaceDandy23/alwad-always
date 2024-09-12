@@ -22,10 +22,12 @@ class TeacherController extends Controller
         return view('teacher.class_views', ['subjectsWithStudents' => $subjectsWithStudents]);
     }
 
-    public function editStatus(Request $request, StudentSubject $status){
-        $status->update(['present' => intval($request->present)]);
+    public function editStatus(Request $request, $studentID){
+        $student = StudentSubject::findOrFail($studentID); 
+        $student->update(['present' => intval($request->present)]);
         return redirect()->route("class.index")->with("success","Student updated");
     }
+
 
 
 }

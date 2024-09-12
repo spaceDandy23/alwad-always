@@ -75,6 +75,9 @@ class StudentController extends Controller
      */
     public function update(Request $request, Student $student)
     {
+
+
+        
         $validatedData = $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',

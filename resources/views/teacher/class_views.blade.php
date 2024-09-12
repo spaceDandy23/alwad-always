@@ -6,12 +6,19 @@
 
 <div class="row justify-content-center">
     <div class="col-10">
+        @include('partials.alerts')
         @foreach ($subjectsWithStudents as $subjectId => $data)
             <h3>{{ $data['subject']->name }}</h3>
             <h3>{{ $data['subject']->schedule }}</h3>
+
+            <h3 class="text-center">
+                <form action="{{ route('rfid-reader-subject.index', $subjectId) }}" method="post">
+                    @csrf
+                    <button type ="submit" class="btn btn-primary">Check Attendance {{ $subjectId }}</button>
+                </form>
+            </h3>
             <table class="table table-striped">
                 <thead>
-                    @include('partials.alerts')
                     <tr>
                         <th scope="col">First Name</th>
                         <th scope="col">Last Name</th>
@@ -40,11 +47,11 @@
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
-                                                <form action="{{ route('students.update', $student->id) }}" method="post">
+                                                <form action="{{ route('class.update', $student->pivot->id) }}" method="post">
                                                     @csrf
                                                     @method('PUT')
                                                     <label for="present_{{ $subjectId }}" class="form-label">Present for {{ $data['subject']->name }}</label>
-                                                    <select class="form-select" id="present_{{ $subjectId }}" name="present[{{ $subjectId }}]">
+                                                    <select class="form-select" id="present_{{ $subjectId }}" name="present">
                                                         <option value="1" {{ $student->pivot->present ? 'selected' : '' }}>Yes</option>
                                                         <option value="0" {{ !$student->pivot->present ? 'selected' : '' }}>No</option>
                                                     </select>
