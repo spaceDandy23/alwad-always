@@ -29,7 +29,7 @@ class AuthController extends Controller
             }
             
             $request->session()->regenerate();
-            return redirect()->route('rfid-reader.index');
+            return redirect()->route('class.index');
 
             
         }

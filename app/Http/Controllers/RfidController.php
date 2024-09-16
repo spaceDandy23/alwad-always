@@ -22,23 +22,31 @@ class RfidController extends Controller
     }
     public function verify(Request $request, $subjectID)
     {
-        $tag = $request->input('rfid_tag');
+        $validatedTag = $request->validate(['rfid_tag' => 'required|numeric']);
+        $tag = $validatedTag['rfid_tag'];
     
         $subject = Subject::findOrFail($subjectID);
+        
         $student = Student::whereHas('tag', function ($query) use ($tag) {
             $query->where('tag_number', $tag);
         })->first();
+        if(!$student){
+            return response()->json([
+                'success' => false,
+                'message' => 'Student not found'
+            ]);
+        }
         $studentSubject = StudentSubject::where(function ($query) use($student,$subject){
             $query->where('student_id', $student->id)
             ->where('subject_id', $subject->id);
         })->first();
-    
-        if (!$student || !$studentSubject) {
+        if(!$studentSubject){
             return response()->json([
                 'success' => false,
-                'message' => 'Student not found',
+                'message' => 'Student not enrolled in this subject'
             ]);
         }
+    
         return response()->json([
             'success' => true,
             'student' => [
@@ -46,7 +54,9 @@ class RfidController extends Controller
                 'first_name' => $student->first_name,
                 'last_name' => $student->last_name,
                 'grade' => $student->grade,
+                'section' => $student->section,
             ],
+            'message' => 'Student found',
         ]);
 
 
