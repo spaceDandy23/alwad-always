@@ -20,35 +20,37 @@ class RfidController extends Controller
         $subject = Subject::findOrFail($subjectID);
         return view('RFID-reader.verify_student', compact('subject'));
     }
-
-
-    public function verify(Request $request,$subjectID){
-        $tag = $request->rfid_tag;
-
+    public function verify(Request $request, $subjectID)
+    {
+        $tag = $request->input('rfid_tag');
+    
         $subject = Subject::findOrFail($subjectID);
-        $student = Student::whereHas('tag', function ($query) use ($tag){
-            return $query->where('tag_number', $tag);
+        $student = Student::whereHas('tag', function ($query) use ($tag) {
+            $query->where('tag_number', $tag);
         })->first();
-        
-        if (!$student) {
-            return redirect()->route('rfid-reader-subject.index', $subjectID)
-                             ->with('error', 'Student not found or RFID tag is incorrect.');
-        }
-        
         $studentSubject = StudentSubject::where(function ($query) use($student,$subject){
             $query->where('student_id', $student->id)
             ->where('subject_id', $subject->id);
         })->first();
-  
-        
-        if(!$studentSubject->update(['present' => true])){
-            return redirect()->route('rfid-reader-subject.index', $subjectID)
-                                        ->with('Unexpected Error');
-
+    
+        if (!$student || !$studentSubject) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Student not found',
+            ]);
         }
-        return redirect()->route('rfid-reader-subject.index', $subjectID)->with(['success' => $student]);
+        return response()->json([
+            'success' => true,
+            'student' => [
+                'rfid_tag' => $tag,
+                'first_name' => $student->first_name,
+                'last_name' => $student->last_name,
+                'grade' => $student->grade,
+            ],
+        ]);
 
 
     }
+    
 
 }

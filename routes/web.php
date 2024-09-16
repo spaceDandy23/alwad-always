@@ -25,7 +25,6 @@ Route::resource('subjects',SubjectController::class);
 //RFID Reader
 Route::get('read',[RfidController::class,'index'])->name('rfid-reader.index'); 
 Route::post('read/{subjectID}',[RfidController::class,'showSubject'])->name('rfid-reader-subject.index'); 
-Route::get('read/{subjectID}',[RfidController::class,'showSubject']); 
 Route::post('read/student/{verifyStudent}',[RfidController::class,'verify'])->name('rfid-reader.verify');
 //Teacher User
 Route::get('class',[TeacherController::class,'index'])->name('class.index');
