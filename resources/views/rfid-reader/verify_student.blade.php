@@ -20,7 +20,7 @@
             @csrf
             <label for='rfid_tag' class='form-label'>RFID Tag</label>
             <input type='text' name='rfid_tag' class='form-control mb-2' id='rfid_field'>
-            <input type="hidden" value="{{ $subject->id }}" id="subject_id">
+            <input type="hidden" value="{{ $subject->id }}" id="subject_id" name="subject_id">
             <button id='submit-btn' class='btn btn-primary' type='submit'>Verify</button>
         </form>
         <table class="table table-striped">
@@ -48,7 +48,9 @@
         document.getElementById('tag_form').addEventListener('submit', (event) => {
             event.preventDefault();
             const formData = new FormData(document.getElementById('tag_form'));
-            const url = "{{ route('rfid-reader.verify', $subject->id) }}";
+            const url = "{{ route('rfid-reader.verify') }}";
+
+
 
             fetch(url, {
                 method: "POST",
@@ -61,10 +63,12 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert(data);
-                    updateTextContent(data);
-                    generateStudents(data);
-                    
+                    if(checkStudent()){
+                        alert(data);
+                        updateTextContent(data);
+                        generateStudents(data);
+                    }
+
                 } else{
                     alert(data);
                     clearTextContent();
@@ -75,8 +79,12 @@
                 console.error('Error:', error);
             });
         });
-        function alert(data){
-            if(data.success){
+        function alert(data, message = ''){
+            if(message){
+                div.className = 'alert alert-warning';;
+                div.innerHTML = `<li>${message}</li>`;
+            }
+            else if(data.success){
                 div.className = 'alert alert-success';;
                 div.innerHTML = `<li>${data.message}</li>`;
             }
@@ -100,6 +108,7 @@
             document.getElementById('grade').innerText = '';
         }
         function generateStudents(data){
+
             students.push(data.student);
             console.log(students);
             let htmlStudents = ``;
@@ -116,7 +125,21 @@
 
         }
 
+        function checkStudent(data){             
+        const existingStudent = students.find((student)=>{
+                return student.rfid_tag ===document.getElementById('rfid_field').value;
+            });
+
+            if (existingStudent) {
+                alert(data, 'Student already exists');
+                return false; 
+            }
+            else{
+                return true;
+            }
+        }
     });
+
 </script>
 
 @endsection

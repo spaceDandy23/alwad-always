@@ -10,7 +10,6 @@ class TeacherController extends Controller
 {
     public function index(){
         $teacher = Auth::user();
-        
 
         $subjectsWithStudents = $teacher->subjects->mapWithKeys(function ($subject) {
             return [$subject->id => [

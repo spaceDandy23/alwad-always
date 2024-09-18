@@ -16,16 +16,17 @@ class RfidController extends Controller
         return view('RFID-reader.verify_student');
     }
 
-    public function showSubject($subjectID){
-        $subject = Subject::findOrFail($subjectID);
+    public function showSubject(Request $request){
+
+        $subject = Subject::findOrFail($request->subject_id);
         return view('RFID-reader.verify_student', compact('subject'));
     }
-    public function verify(Request $request, $subjectID)
+    public function verify(Request $request)
     {
         $validatedTag = $request->validate(['rfid_tag' => 'required|numeric']);
         $tag = $validatedTag['rfid_tag'];
     
-        $subject = Subject::findOrFail($subjectID);
+        $subject = Subject::findOrFail($request->subject_id);
         
         $student = Student::whereHas('tag', function ($query) use ($tag) {
             $query->where('tag_number', $tag);

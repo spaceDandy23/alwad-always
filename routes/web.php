@@ -11,26 +11,42 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->middleware('auth');
 
 
-//CRUD students
-Route::resource('students',StudentController::class);    
+ 
 //CRUD attendance record
 // Route::resource('attendances',AttendanceController::class);
-//CRUD teachers
-Route::resource('users', UserController::class);
-//CRUD schedule
-Route::resource('subjects',SubjectController::class);
-//RFID Reader
-Route::get('read',[RfidController::class,'index'])->name('rfid-reader.index'); 
-Route::post('read/{subjectID}',[RfidController::class,'showSubject'])->name('rfid-reader-subject.index'); 
-Route::post('read/student/{verifyStudent}',[RfidController::class,'verify'])->name('rfid-reader.verify');
-//Teacher User
-Route::get('class',[TeacherController::class,'index'])->name('class.index');
-Route::put('class/{studentID}',[TeacherController::class,'editStatus'])->name('class.update');
 
-//Authentication
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login.index');
-Route::post('/login', [AuthController::class, 'login'])->name('login.auth');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+
+Route::middleware('no-cache')->group(function () {
+    Route::middleware([ 'admin'])->group(function () {
+        //CRUD students
+        Route::resource('students',StudentController::class);  
+        //CRUD subjects
+        Route::resource('subjects',SubjectController::class); 
+        //CRUD teachers
+        Route::resource('users', UserController::class);
+    });
+    Route::middleware(['auth', 'teacher'])->group(function(){
+        //RFID logic
+        Route::get('read',[RfidController::class,'index'])->name('rfid-reader.index'); 
+        Route::post('read',[RfidController::class,'showSubject'])->name('rfid-reader-subject.index'); 
+        Route::post('read/subject',[RfidController::class,'verify'])->name('rfid-reader.verify');
+
+        //Teacher User
+        Route::get('class',[TeacherController::class,'index'])->name('class.index');
+        Route::put('class/{studentID}',[TeacherController::class,'editStatus'])->name('class.update');
+
+
+    });
+
+
+
+    //Authentication
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login')->middleware('guest');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.auth');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+});
