@@ -12,7 +12,7 @@
             <h3>{{ $data['subject']->schedule }}</h3>
 
             <h3 class="text-center">
-                <form action="{{ route('rfid-reader-subject.index') }}" method="post">
+                <form action="{{ route('rfid-reader') }}" method="post">
                     @csrf
                     <input type="hidden" value = {{ $subjectId }} name = "subject_id">
                     <button type ="submit" class="btn btn-primary">Check Attendance {{ $subjectId }}</button>

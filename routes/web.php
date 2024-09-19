@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
-})->middleware('auth');
+});
 
 
  
@@ -21,7 +21,7 @@ Route::get('/', function () {
 
 
 Route::middleware('no-cache')->group(function () {
-    Route::middleware([ 'admin'])->group(function () {
+    Route::middleware(['auth', 'admin'])->group(function () {
         //CRUD students
         Route::resource('students',StudentController::class);  
         //CRUD subjects
@@ -31,13 +31,12 @@ Route::middleware('no-cache')->group(function () {
     });
     Route::middleware(['auth', 'teacher'])->group(function(){
         //RFID logic
-        Route::get('read',[RfidController::class,'index'])->name('rfid-reader.index'); 
-        Route::post('read',[RfidController::class,'showSubject'])->name('rfid-reader-subject.index'); 
+        Route::match(['get', 'post'], '/read', [RfidController::class, 'showSubject'])->name('rfid-reader');
         Route::post('read/subject',[RfidController::class,'verify'])->name('rfid-reader.verify');
 
         //Teacher User
         Route::get('class',[TeacherController::class,'index'])->name('class.index');
-        Route::put('class/{studentID}',[TeacherController::class,'editStatus'])->name('class.update');
+        Route::put('class/{studentId}',[TeacherController::class,'editStatus'])->name('class.update');
 
 
     });

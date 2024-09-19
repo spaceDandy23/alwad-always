@@ -9,12 +9,16 @@ class Attendance extends Model
 {
     use HasFactory;
 
-    // protected $fillable = ['student_id', 'present'];
-
-
-
-    // public function subject()
-    // {
-    //     return $this->belongsTo(Subject::class);
-    // }
+    public function student()
+    {
+        return $this->belongsTo(Student::class);
+    }
+    public function teacher()
+    {
+        return $this->belongsTo(User::class);
+    }
+    public function subject()
+    {
+        return $this->belongsTo(Subject::class);
+    }
 }

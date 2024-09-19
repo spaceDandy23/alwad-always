@@ -29,6 +29,10 @@ class AuthController extends Controller
             }
             
             $request->session()->regenerate();
+            if($user->isAdmin()){
+
+                return redirect()->route('students.index');
+            }
             return redirect()->route('class.index');
 
             
@@ -39,6 +43,6 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect()->route('rfid-reader.index');
+        return redirect()->route('login');
     }
 }

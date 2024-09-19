@@ -12,14 +12,24 @@ class RfidController extends Controller
 
 
 
-    public function index(){
-        return view('RFID-reader.verify_student');
-    }
 
     public function showSubject(Request $request){
 
-        $subject = Subject::findOrFail($request->subject_id);
-        return view('RFID-reader.verify_student', compact('subject'));
+
+        if($request->isMethod('post')){
+            $subject = Subject::findOrFail($request->subject_id);
+
+
+            if(!$subject){
+                return redirect()->route('rfid-reader');
+            }
+            $request->session()->put('subject', $subject);
+            
+            return redirect()->route('rfid-reader');
+        }
+        $subSession = session()->get('subject','');
+
+        return view('RFID-reader.verify_student', compact('subSession'));
     }
     public function verify(Request $request)
     {
@@ -51,6 +61,7 @@ class RfidController extends Controller
         return response()->json([
             'success' => true,
             'student' => [
+                'student_id' => $student->id,
                 'rfid_tag' => $tag,
                 'first_name' => $student->first_name,
                 'last_name' => $student->last_name,

@@ -41,7 +41,7 @@ class UserController extends Controller
                         'email' => $validatedData['email'],
                         'password' => Hash::make($validatedData['password']),   
                     ]);
-        return redirect()->route('users.index')->with(['success' => 'User added']);
+        return redirect()->route('users.index')->with('success', 'User added');
     }
 
     /**
@@ -74,9 +74,10 @@ class UserController extends Controller
         $user->update([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
-            'password' => Hash::make($validatedData['password'])
+            'password' => Hash::make($validatedData['password']),
+            'role' => $request->role,
         ]);
-        return redirect()->route('users.index')->with(['success' => 'User Edited']);
+        return redirect()->route('users.index')->with('success', 'User Edited');
     }
 
     /**

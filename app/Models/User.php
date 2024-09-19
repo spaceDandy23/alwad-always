@@ -49,6 +49,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Subject::class, 'subject_teacher');
     }
 
+    public function attendanceRecords(){
+
+        return $this->hasMany(Attendance::class);
+    }
+
     public function isTeacher(){
         return $this->role === 'teacher';
     }
