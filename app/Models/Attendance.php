@@ -21,4 +21,5 @@ class Attendance extends Model
     {
         return $this->belongsTo(Subject::class);
     }
+    protected $fillable = ['present', 'date','subject_id', 'teacher_id', 'student_id'];
 }

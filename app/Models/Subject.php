@@ -12,7 +12,7 @@ class Subject extends Model
     protected $fillable = ['schedule', 'name' ];
 
     public function students(){
-        return $this->belongsToMany(Student::class, 'student_subject')->withPivot('present','id');
+        return $this->belongsToMany(Student::class, 'student_subject');
     }
     public function teachers(){
         return $this->belongsToMany(User::class, 'subject_teacher');

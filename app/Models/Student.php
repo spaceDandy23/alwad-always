@@ -17,7 +17,7 @@ class Student extends Model
     }
     public function subjects()
     {
-        return $this->belongsToMany(Subject::class,'student_subject')->withPivot('present','id');
+        return $this->belongsToMany(Subject::class,'student_subject');
     }
     public function attendanceRecords(){
 

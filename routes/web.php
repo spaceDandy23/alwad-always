@@ -38,14 +38,16 @@ Route::middleware('no-cache')->group(function () {
         Route::get('class',[TeacherController::class,'index'])->name('class.index');
         Route::put('class/{studentId}',[TeacherController::class,'editStatus'])->name('class.update');
 
+        Route::get('student-attendance', [TeacherController::class, 'saveAttendance'])->name('attendance');
+
 
     });
 
 
 
     //Authentication
-    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login')->middleware('guest');
-    Route::post('/login', [AuthController::class, 'login'])->name('login.auth');
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::get('login', [AuthController::class, 'showLoginForm'])->name('login')->middleware('guest');
+    Route::post('login', [AuthController::class, 'login'])->name('login.auth'); //use match
+    Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
 });

@@ -14,11 +14,14 @@ class TeacherController extends Controller
         $subjectsWithStudents = $teacher->subjects->mapWithKeys(function ($subject) {
             return [$subject->id => [
                 'subject' => $subject,
-                'students' => $subject->students()->withPivot('present')->get()
+                'students' => $subject->students,
             ]];
         });
     
         return view('teacher.class_views', ['subjectsWithStudents' => $subjectsWithStudents]);
+    }
+    public function saveAttendance(){
+        return view('teacher.attendance_record');
     }
 
     public function editStatus(Request $request, $studentID){
