@@ -10,7 +10,6 @@
         @foreach ($subjectsWithStudents as $subjectId => $data)
             <h3>{{ $data['subject']->name }}</h3>
             <h3>{{ $data['subject']->schedule }}</h3>
-
             <h3 class="text-center">
                 <form action="{{ route('rfid-reader') }}" method="post">
                     @csrf
@@ -25,7 +24,6 @@
                         <th scope="col">Last Name</th>
                         <th scope="col">Grade</th>
                         <th scope="col">Section</th>
-                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -35,9 +33,6 @@
                             <td>{{ $student->last_name }}</td>
                             <td>{{ $student->grade }}</td>
                             <td>{{ $student->section }}</td>
-                            <td>
-                                <a class="btn btn-warning" href="#" data-bs-toggle="modal" data-bs-target="#editStudent{{ $student->id }}_{{ $subjectId }}">Edit</a>
-                            </td>
                         </tr>
                     @endforeach
                 </tbody>

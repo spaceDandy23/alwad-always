@@ -38,8 +38,8 @@ Route::middleware('no-cache')->group(function () {
         Route::get('class',[TeacherController::class,'index'])->name('class.index');
         Route::put('class/{studentId}',[TeacherController::class,'editStatus'])->name('class.update');
 
-        Route::get('student-attendance', [TeacherController::class, 'saveAttendance'])->name('attendance');
-
+        Route::get('attendance', [TeacherController::class, 'attendanceRecords'])->name('attendance');
+        Route::post('attendance/store', [TeacherController::class, 'storeAttendance'])->name('store-attendance');
 
     });
 

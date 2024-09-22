@@ -18,9 +18,28 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
-                <li class="nav-item">
-                        
-                </li>
+                @if (Auth::check())
+                    <!-- Links for authenticated users -->
+                    @if (Auth::user()->isAdmin())
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('students.index') }}">Students</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('subjects.index') }}">Subjects</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('users.index') }}">Teachers</a>
+                        </li>
+                    @endif
+                    @if (Auth::user()->isTeacher())
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('class.index') }}">Class</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('attendance') }}">Attendance Records</a>
+                        </li>
+                    @endif
+                @endif
             </ul>
             <ul class="navbar-nav ms-auto">
                 @if (Auth::check())

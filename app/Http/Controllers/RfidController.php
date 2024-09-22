@@ -34,23 +34,29 @@ class RfidController extends Controller
 
     public function verify(Request $request)
     {
-        $validatedTag = $request->validate(['rfid_tag' => 'required|numeric']);
+        $validatedTag = $request->validate([
+            'rfid_tag' => 'required|numeric|exists:tags,tag_number', 
+        ]);
         $tag = $validatedTag['rfid_tag'];
         $subject = Subject::findOrFail($request->subject_id);
 
 
-        foreach (Session::get($subject->id, []) as $s) {
-            if ($tag === $s['rfid_tag']) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Student already attended',
-                ]);
-            }
-        }
+
 
         $student = Student::whereHas('tag', function ($query) use ($tag) {
             $query->where('tag_number', $tag);
         })->first();
+
+
+        foreach (Session::get($subject->id, []) as $studentId => $studentData) {
+            if ($studentData['id'] === $student->id && $studentData['present']) {
+                return response()->json([
+                    'success' => false,
+                    'studentId' => $studentData['id'],
+                    'message' => 'Student already attended',
+                ]);
+            }
+        }
 
         if (!$student) {
             return response()->json([
@@ -71,14 +77,22 @@ class RfidController extends Controller
             ]);
         }
 
-        $student->setAttribute('rfid_tag', $tag);
-        $student->setAttribute('present', true);
+        // $student->setAttribute('rfid_tag', $tag);
+        // $student->setAttribute('present', true);
 
-        $this->setPresent($student, $subject, Auth::user());
-        
-
+        // $this->setPresent($student, $subject, Auth::user());
         $studentsAttended = Session::get($subject->id, []);
-        array_push($studentsAttended, $student);
+        foreach ($subject->students as $s) {
+            $studentsAttended[$s->id] = [
+                'id' => $s->id,
+                'present' => ($s->id === $student->id) ? true : ($studentsAttended[$s->id]['present'] ?? false),
+                'first_name' => $s->first_name,
+                'last_name' => $s->last_name,
+                'grade' => $s->grade,
+                'section' => $s->section,
+            ];
+        }
+    
         Session::put($subject->id, $studentsAttended);
 
         return response()->json([

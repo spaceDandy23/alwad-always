@@ -22,7 +22,7 @@
                 <label for='rfid_tag' class='form-label'>RFID Tag</label>
                 <input type='text' name='rfid_tag' class='form-control mb-2' id='rfid_field'>
                 <input type="hidden" value="{{ Session::get('subject')->id }}" id="subject_id" name="subject_id">
-                <button id='submit-btn' class='btn btn-primary' type='submit'>Verify</button>
+                <button class='btn btn-primary' type='submit'>Verify</button>
             </form>
 
             <table class="table table-striped">
@@ -73,11 +73,12 @@
                     alert(data);
                     updateTextContent(data);
                     generateData(data.studentsAttended);
-                    sessionStorage.setItem(`students_${subSessionId}`, JSON.stringify(data.studentsAttended));
+                    sessionStorage.setItem(subSessionId, JSON.stringify(data.studentsAttended));
                 } else {
                     alert(data);
                     clearTextContent();
                     console.error('Student not found or other error');
+                    console.log(data.studentId);
                 }
             })
             .catch(error => {
@@ -115,23 +116,25 @@
 
         function generateData(students) {
             let studentsData = '';
-            students.forEach(student => {
+            console.log(students);
+            Object.values(students).forEach(student => {
                 studentsData += `
-                    <tr>
-                        <td>${student.first_name}</td>
-                        <td>${student.last_name}</td>
-                        <td>${student.grade}</td>
-                        <td>${student.section}</td>
-                        <td>${student.present ? 'Present' : 'Not Present'}</td>
-                    </tr>
-                `;
+                <tr>
+                    <td>${student.first_name}</td>
+                    <td>${student.last_name}</td>
+                    <td>${student.grade}</td>
+                    <td>${student.section}</td>
+                    <td>${student.present ? 'Present' : 'Pending'}</td>
+                </tr>
+            `;
+                
             });
 
             document.getElementById('students_list').innerHTML = studentsData;
         }
 
         function loadStoredStudents() {
-            const storedStudents = sessionStorage.getItem(`students_${subSessionId}`);
+            const storedStudents = sessionStorage.getItem(subSessionId);
             if (storedStudents) {
                 const students = JSON.parse(storedStudents);
                 generateData(students);
