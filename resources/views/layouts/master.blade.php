@@ -36,7 +36,7 @@
                             <a class="nav-link" href="{{ route('class.index') }}">Class</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('attendance') }}">Attendance Records</a>
+                            <a class="nav-link" href="{{ route('attendance') }}">Attendance</a>
                         </li>
                     @endif
                 @endif

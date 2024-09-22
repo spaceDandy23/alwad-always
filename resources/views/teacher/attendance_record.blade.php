@@ -48,94 +48,102 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        let studentFormInputs = '';
-        let students = '';
-        let subjectIds = [];
-        generateData();
+    let studentFormInputs = '';
+    let students = '';
+    let subjectIds = [];
+    generateData();
 
-        function generateData(){
-
-            Object.entries(sessionStorage).forEach(([key, value]) => {
-                const studentArray = JSON.parse(value);
-                subjectIds.push(key);
-                console.log(studentArray);
-                Object.values(studentArray).forEach(studentData => {
-                    students += `
-                        
-                        <tr class="student-data">
-                            <td class="student_id" type="hidden">${studentData.id}</td>
-                            <td class="student-name">${studentData.first_name} ${studentData.last_name}</td>
-                            <td>${studentData.grade}</td>
-                            <td>${studentData.section}</td>
-                            <td>
-                                <select class="form-select" name="present">
-                                    <option value="1" ${studentData.present ? "selected" : ""}>Present</option>
-                                    <option value="0" ${!studentData.present ? "selected" : ""}>Absent</option>
-                                </select>
-                            </td>
-                        </tr>
-                    `;
-                });
+    function generateData() {
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            const studentArray = JSON.parse(value);
+            subjectIds.push(key);
+            console.log(studentArray);
+            Object.values(studentArray).forEach(studentData => {
+                students += `
+                    <tr class="student-data">
+                        <td class="student_id" type="hidden">${studentData.id}</td>
+                        <td class="student-name">${studentData.first_name} ${studentData.last_name}</td>
+                        <td>${studentData.grade}</td>
+                        <td>${studentData.section}</td>
+                        <td>
+                            <select class="form-select" name="present" data-student-id="${studentData.id}" data-subject-id="${key}">
+                                <option value="1" ${studentData.present ? "selected" : ""}>Present</option>
+                                <option value="0" ${!studentData.present ? "selected" : ""}>Absent</option>
+                            </select>
+                        </td>
+                    </tr>
+                `;
             });
-        }
+        });
+    }
 
+    document.getElementById('attendanceBody').innerHTML = students;
 
-        document.getElementById('attendanceBody').innerHTML = students;
-       if(students){
+    if (students) {
         document.getElementById('modal_button').innerHTML = ' <a href="#" class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#markAttendance">Mark Attendance</a>';
-       }
+    }
+    document.querySelectorAll('.form-select').forEach(select => {
+        select.addEventListener('change', function () {
+            const studentId = this.getAttribute('data-student-id');
+            const subjectId = this.getAttribute('data-subject-id');
+            const presentValue = this.value;
+            let sessionData = JSON.parse(sessionStorage.getItem(subjectId));
+            sessionData[studentId].present = parseInt(presentValue);
+            sessionStorage.setItem(subjectId, JSON.stringify(sessionData));
 
-        document.getElementById('markAttendance').addEventListener('show.bs.modal', () => {
-            studentFormInputs = ''; 
-            document.querySelectorAll('.student-data').forEach((student) => {
+            console.log(`Updated session for Student ID: ${studentId}, Subject ID: ${subjectId}, Present: ${presentValue}`);
+        });
+    });
 
-                const studentName = student.querySelector('.student-name').innerText;
-                const studentForm = student.querySelector('.form-select');
+    document.getElementById('markAttendance').addEventListener('show.bs.modal', () => {
+        studentFormInputs = '';
+        document.querySelectorAll('.student-data').forEach((student) => {
+            const studentName = student.querySelector('.student-name').innerText;
+            const studentForm = student.querySelector('.form-select');
 
-                const studentState = studentForm.options[studentForm.selectedIndex].innerText;
-                console.log(` ${studentName} ${studentState} ${studentForm.value}`);
+            const studentState = studentForm.options[studentForm.selectedIndex].innerText;
+            console.log(` ${studentName} ${studentState} ${studentForm.value}`);
 
-                studentFormInputs += `<ul>
-                                        <li>
-                                            ${studentName} - ${studentState}
-                                        </li>
-                                    </ul>`; 
+            studentFormInputs += `<ul>
+                                    <li>
+                                        ${studentName} - ${studentState}
+                                    </li>
+                                  </ul>`;
+        });
+        document.getElementById('studentFormList').innerHTML = studentFormInputs;
+    });
 
-            });
-            document.getElementById('studentFormList').innerHTML = studentFormInputs;
+    document.getElementById('send_student_data').addEventListener('click', () => {
+        let url = "{{ route('store-attendance') }}";
+        let presentStatuses = {};
+
+        document.querySelectorAll('.student-data').forEach((student) => {
+            const studentId = student.querySelector('.student_id').innerText;
+            const studentForm = student.querySelector('.form-select');
+            presentStatuses[studentId] = studentForm.value;
         });
 
-
-        document.getElementById('send_student_data').addEventListener('click', () => {
-            let url = "{{ route('store-attendance') }}";
-            let presentStatuses = {};
-
-            document.querySelectorAll('.student-data').forEach((student) => {
-                const studentId = student.querySelector('.student_id').innerText; // Adjust this line to get the student ID
-                const studentForm = student.querySelector('.form-select');
-                presentStatuses[studentId] = studentForm.value; 
-            });
-
-            fetch(url, {
-                method: "POST",
-                headers: {
-                    'X-CSRF-TOKEN': "{{ csrf_token() }}",
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    subjects: subjectIds,
-                    present: presentStatuses 
-                }),
-            })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.success) {
-                    console.log('added');
-                }
+        fetch(url, {
+            method: "POST",
+            headers: {
+                'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                subjects: subjectIds,
+                present: presentStatuses
+            }),
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.success) {
+                console.log('added');
+            }
             });
         });
     });
+
 </script>
 
 @endsection
