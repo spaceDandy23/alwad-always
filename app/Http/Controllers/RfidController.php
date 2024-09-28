@@ -17,20 +17,33 @@ class RfidController extends Controller
         if ($request->isMethod('post')) {
             $subject = Subject::findOrFail($request->subject_id);
 
-            if (!$subject) {
-                return redirect()->route('rfid-reader');
+            Session::put('subject', $subject);
+
+            foreach ($subject->students as $s) {
+                $studentsWithPresent[$s->id] = [
+                    'id' => $s->id,
+                    'present' => false,
+                    'first_name' => $s->first_name,
+                    'last_name' => $s->last_name,
+                    'grade' => $s->grade,
+                    'section' => $s->section,
+                    'rfid_tag' =>$s->tag->tag_number,
+                ];
             }
 
-
-            Session::put('subject', $subject);
+            Session::put($subject->id, $studentsWithPresent );
+            
             
             return redirect()->route('rfid-reader');
         }
 
         $subSession = Session::get('subject', ''); 
+        $subSessionStudents = $subSession->students;
 
-        return view('RFID-reader.verify_student', compact('subSession'));
+        return view('RFID-reader.verify_student', compact('subSession', 'subSessionStudents'));
     }
+
+
 
     public function verify(Request $request)
     {
@@ -47,16 +60,6 @@ class RfidController extends Controller
             $query->where('tag_number', $tag);
         })->first();
 
-
-        foreach (Session::get($subject->id, []) as $studentId => $studentData) {
-            if ($studentData['id'] === $student->id && $studentData['present']) {
-                return response()->json([
-                    'success' => false,
-                    'studentId' => $studentData['id'],
-                    'message' => 'Student already attended',
-                ]);
-            }
-        }
 
         if (!$student) {
             return response()->json([
@@ -77,10 +80,6 @@ class RfidController extends Controller
             ]);
         }
 
-        // $student->setAttribute('rfid_tag', $tag);
-        // $student->setAttribute('present', true);
-
-        // $this->setPresent($student, $subject, Auth::user());
         $studentsAttended = Session::get($subject->id, []);
         foreach ($subject->students as $s) {
             $studentsAttended[$s->id] = [
@@ -90,6 +89,7 @@ class RfidController extends Controller
                 'last_name' => $s->last_name,
                 'grade' => $s->grade,
                 'section' => $s->section,
+                'rfid_tag' =>$s->tag->tag_number,
             ];
         }
     
@@ -110,15 +110,4 @@ class RfidController extends Controller
         ]);
     }
 
-    public function setPresent($student, $subject, $teacher){
-        // Attendance::create(
-        //     ['present' => $student['present'],
-        //                 'student_id' => $student->id,
-        //                 'subject_id' => $subject->id,
-        //                 'teacher_id' => $teacher->id,
-        //                 'date' => '2002-06-12',
-        //         ]);
-        
-
-    }
 }

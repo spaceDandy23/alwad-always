@@ -30,6 +30,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('users.index') }}">Teachers</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('register-tag') }}">Register Student</a>
+                        </li>
                     @endif
                     @if (Auth::user()->isTeacher())
                         <li class="nav-item">
@@ -37,6 +40,9 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('attendance') }}">Attendance</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('students-strikes') }}">Strikes</a>
                         </li>
                     @endif
                 @endif

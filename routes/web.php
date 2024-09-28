@@ -24,22 +24,26 @@ Route::middleware('no-cache')->group(function () {
     Route::middleware(['auth', 'admin'])->group(function () {
         //CRUD students
         Route::resource('students',StudentController::class);  
+        Route::post('import', [StudentController::class, 'importCSV'])->name('import-csv');
+        Route::match(['get', 'post'], 'register',[StudentController::class, 'register'])->name('register-tag');
+
         //CRUD subjects
         Route::resource('subjects',SubjectController::class); 
         //CRUD teachers
         Route::resource('users', UserController::class);
+
     });
     Route::middleware(['auth', 'teacher'])->group(function(){
         //RFID logic
-        Route::match(['get', 'post'], '/read', [RfidController::class, 'showSubject'])->name('rfid-reader');
+        Route::match(['get', 'post'], 'read', [RfidController::class, 'showSubject'])->name('rfid-reader');
         Route::post('read/subject',[RfidController::class,'verify'])->name('rfid-reader.verify');
 
         //Teacher User
         Route::get('class',[TeacherController::class,'index'])->name('class.index');
-        Route::put('class/{studentId}',[TeacherController::class,'editStatus'])->name('class.update');
 
         Route::get('attendance', [TeacherController::class, 'attendanceRecords'])->name('attendance');
         Route::post('attendance/store', [TeacherController::class, 'storeAttendance'])->name('store-attendance');
+        Route::get('message',[TeacherController::class,'messageParent'])->name('students-strikes');
 
     });
 

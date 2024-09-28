@@ -53,6 +53,8 @@
     let subjectIds = [];
     generateData();
 
+
+    
     function generateData() {
         Object.entries(sessionStorage).forEach(([key, value]) => {
             const studentArray = JSON.parse(value);
@@ -90,6 +92,8 @@
             let sessionData = JSON.parse(sessionStorage.getItem(subjectId));
             sessionData[studentId].present = parseInt(presentValue);
             sessionStorage.setItem(subjectId, JSON.stringify(sessionData));
+
+
 
             console.log(`Updated session for Student ID: ${studentId}, Subject ID: ${subjectId}, Present: ${presentValue}`);
         });
@@ -139,6 +143,9 @@
         .then((data) => {
             if (data.success) {
                 console.log('added');
+            }
+            else{
+                console.log('student has 3 strikes');
             }
             });
         });

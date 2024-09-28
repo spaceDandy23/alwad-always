@@ -19,6 +19,6 @@ class TeacherMiddleware
         if(Auth::check() && Auth::user()->isTeacher()){
             return $next($request);
         }
-        abort(401);
+        return redirect()->route('students.index');
     }
 }

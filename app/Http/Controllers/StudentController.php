@@ -16,6 +16,49 @@ class StudentController extends Controller
         $students = Student::all();
         return view("admin.student-record.student_list", compact("students"));
     }
+    public function importCSV(Request $request){
+        $file = $request->file('csv_file');
+
+        $path = $file->storeAs('public/csv', $file->getClientOriginalName());
+
+
+        if(($handle = fopen(storage_path('app/'. $path), 'r')) !== false){
+            fgetcsv($handle);
+            while(($data = fgetcsv($handle, 1000, ",")) !== false){
+
+                Student::create([
+                    'first_name' => $data[1],
+                    'last_name' => $data[2],
+                    'middle_name' => $data[3],
+                    'grade' => intval($data[4]),
+                    'section' => intval($data[5]),
+                ]);
+
+            }
+            fclose($handle);
+        }
+        return back()->with('success', 'Added Successfully');
+    }
+
+
+    public function register(Request $request){
+        if($request->isMethod('post')){
+
+            $request->validate([
+                'rfid_tag' => 'required|numeric|unique:tags,tag_number',  
+            ]);
+            $studentId = Student::findOrFail($request->student_id);
+
+            Tag::create([
+                'tag_number' => $request->rfid_tag,
+                'student_id' => $studentId->id,
+            ]);
+            return redirect()->route('register-tag')->with('success', 'Student Registered');
+
+        }
+        $students = Student::all();
+        return view('admin.register_student', compact('students'));
+    }
 
     /**
      * Show the form for creating a new resource.

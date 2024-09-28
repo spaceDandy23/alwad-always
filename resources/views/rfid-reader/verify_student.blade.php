@@ -4,6 +4,8 @@
 
 @section('content')
 
+
+
 @if (Session::has('subject'))
     <div class='card'>
         <div class='card-body' id="card_body">
@@ -52,12 +54,26 @@
         let div = document.getElementById('alert');
         const subSessionId = "{{ $subSession->id }}"; 
 
+
+        if(sessionStorage.getItem(subSessionId)){
+            console.log('true');
+        }
+        else{
+            sessionStorage.setItem("{{$subSession->id}}", JSON.stringify(@json($subSessionStudents)));
+        }
         loadStoredStudents();
 
         document.getElementById('tag_form').addEventListener('submit', (event) => {
             event.preventDefault();
-            const formData = new FormData(document.getElementById('tag_form'));
+            let formData = new FormData(document.getElementById('tag_form'));
             const url = "{{ route('rfid-reader.verify') }}";
+
+
+            
+            if(!checkIfExist(formData)){
+                alert({}, 'Student Already Attended');
+                return;
+            }
 
             fetch(url, {
                 method: "POST",
@@ -78,7 +94,6 @@
                     alert(data);
                     clearTextContent();
                     console.error('Student not found or other error');
-                    console.log(data.studentId);
                 }
             })
             .catch(error => {
@@ -112,6 +127,7 @@
             document.getElementById('first_name').innerText = '';
             document.getElementById('last_name').innerText = '';
             document.getElementById('grade').innerText = '';
+            document.getElementById('section').innerText = '';
         }
 
         function generateData(students) {
@@ -139,6 +155,17 @@
                 const students = JSON.parse(storedStudents);
                 generateData(students);
             }
+        }
+
+        function checkIfExist(formData) {
+            for (const values of Object.values(JSON.parse(sessionStorage.getItem(subSessionId)))) {
+                if (values.rfid_tag === formData.get('rfid_tag')) {
+                    if(values.present){
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
     });
 </script>

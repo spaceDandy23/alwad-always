@@ -13,6 +13,6 @@ class Tag extends Model
 
 
     public function student(){
-        return $this->belongsTo(Tag::class);
+        return $this->belongsTo(Student::class);
     }
 }

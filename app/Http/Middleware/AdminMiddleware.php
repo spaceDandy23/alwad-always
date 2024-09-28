@@ -20,6 +20,6 @@ class AdminMiddleware
         if(Auth::check() && Auth::user()->isAdmin()){
             return $next($request);
         }
-        abort(401);
+        return redirect()->route('class.index');
     }
 }
