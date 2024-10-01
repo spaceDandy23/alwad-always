@@ -25,6 +25,7 @@ Route::middleware('no-cache')->group(function () {
         //CRUD students
         Route::resource('students',StudentController::class);  
         Route::post('import', [StudentController::class, 'importCSV'])->name('import-csv');
+        Route::post('search', [StudentController::class, 'search'])->name('search')->middleware('teacher');
         Route::match(['get', 'post'], 'register',[StudentController::class, 'register'])->name('register-tag');
 
         //CRUD subjects
@@ -41,17 +42,25 @@ Route::middleware('no-cache')->group(function () {
         //Teacher User
         Route::get('class',[TeacherController::class,'index'])->name('class.index');
 
+        //Attendance logic
         Route::get('attendance', [TeacherController::class, 'attendanceRecords'])->name('attendance');
         Route::post('attendance/store', [TeacherController::class, 'storeAttendance'])->name('store-attendance');
         Route::get('message',[TeacherController::class,'messageParent'])->name('students-strikes');
 
+        //Create Class
+        Route::match(['post', 'get'], 'create', [TeacherController::class, 'createClass'])->name('create-class');
+
+    });
+    //Admin and Teacher
+    Route::middleware(['auth'])->group(function () {
+        Route::post('search', [StudentController::class, 'search'])->name('search');
     });
 
 
 
     //Authentication
     Route::get('login', [AuthController::class, 'showLoginForm'])->name('login')->middleware('guest');
-    Route::post('login', [AuthController::class, 'login'])->name('login.auth'); //use match
+    Route::post('login', [AuthController::class, 'login'])->name('login.auth'); //use match ??
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
 });

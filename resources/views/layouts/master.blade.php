@@ -44,6 +44,14 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('students-strikes') }}">Strikes</a>
                         </li>
+                        @if(Session::has('subject'))
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('rfid-reader') }}">Check Attendance</a>
+                        </li>
+                        @endif
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('create-class') }}">Create Class</a>
+                        </li>
                     @endif
                 @endif
             </ul>

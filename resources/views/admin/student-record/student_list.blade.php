@@ -117,6 +117,9 @@
                 @endforeach
             </tbody>
         </table>
+        <div class="d-flex justify-content-center">
+            {{ $students->links('vendor.pagination.bootstrap-5')  }}
+        </div>
     </div>
 </div>
 

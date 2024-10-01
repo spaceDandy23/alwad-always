@@ -6,6 +6,7 @@ use App\Models\Attendance;
 use App\Models\Student;
 use App\Models\StudentSubject;
 use App\Models\Subject;
+use App\Models\SubjectTeacher;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Session;
@@ -71,6 +72,49 @@ class TeacherController extends Controller
     public function messageParent(){
         $studentsWithStrikes = Student::where('strikes', 3)->get();
         return view('teacher.message_parent', compact('studentsWithStrikes'));
+    }
+
+    public function createClass(Request $request){
+
+        if($request->isMethod('post')){
+
+            $validatedData = $request->validate([
+                'subject' => 'required|exists:subjects,id',
+                'students' => 'required',
+                'start_time' => 'required',
+                'end_time' => 'required',
+            ]);
+
+
+            $subject = Subject::findOrFail($validatedData['subject']);
+            
+            $schedule = "{$validatedData['start_time']['hour']}:{$validatedData['start_time']['minute']} {$validatedData['start_time']['ampm']}-{$validatedData['end_time']['hour']}:{$validatedData['end_time']['minute']} {$validatedData['end_time']['ampm']}";
+
+            // StudentSubject::
+            SubjectTeacher::create([
+                'user_id' => Auth::user()->id,
+                'subject_id' => $subject->id,
+                'schedule' => $schedule
+            ]);
+            foreach($validatedData['students'] as $student){
+                $foundStudent = Student::findOrFail($student['id']);
+                StudentSubject::create([
+                    'student_id' => $foundStudent->id,
+                    'subject_id' => $subject->id
+                ]);
+
+
+            }
+           
+
+            return response()->json([
+                'success' => true
+            ]);
+
+        }
+        $subjects = Subject::all();
+        $students = Student::all();
+        return view('teacher.create_class',compact('subjects','students'));
     }
     
 

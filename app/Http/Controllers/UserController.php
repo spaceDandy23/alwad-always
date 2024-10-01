@@ -13,7 +13,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::all(); 
+        $users = User::paginate(5); 
         $roles = ['admin','teacher'];
         return view('admin.teacher-record.teachers_list',compact('users','roles'));  
     }

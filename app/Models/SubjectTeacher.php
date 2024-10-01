@@ -10,4 +10,8 @@ class SubjectTeacher extends Model
     use HasFactory;
 
     protected $table = 'subject_teacher';
+
+
+
+    protected $fillable = ['user_id', 'subject_id','schedule'];
 }

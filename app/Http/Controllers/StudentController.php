@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Student;
 use App\Models\Tag;
 use Illuminate\Http\Request;
+use Schema;
 
 class StudentController extends Controller
 {
@@ -13,7 +14,7 @@ class StudentController extends Controller
      */
     public function index()
     {
-        $students = Student::all();
+        $students = Student::paginate(20);
         return view("admin.student-record.student_list", compact("students"));
     }
     public function importCSV(Request $request){
@@ -39,6 +40,37 @@ class StudentController extends Controller
         }
         return back()->with('success', 'Added Successfully');
     }
+    public function search(Request $request){
+
+        $query = $request->input('search');
+
+        $columns = Schema::getColumnListing('students');
+        $studentQuery = Student::query();
+
+        
+        if(ctype_digit($query)){
+            $integerQuery = intVal($query);
+            $studentQuery->where('grade', 'LIKE', $integerQuery)
+            ->orWhere('section', 'LIKE', $integerQuery);
+        }
+        else{
+            foreach($columns as $column){
+                $studentQuery->orWhere($column, 'LIKE', "%{$query}%");
+            }
+        }
+
+        if($studentQuery->get()->isEmpty()){
+            return response()->json(['success' => false]);
+        }
+
+
+        return response()->json([
+            'success' => true,
+            'results' => $studentQuery->get(),
+        ]);
+
+
+    }
 
 
     public function register(Request $request){
@@ -56,8 +88,7 @@ class StudentController extends Controller
             return redirect()->route('register-tag')->with('success', 'Student Registered');
 
         }
-        $students = Student::all();
-        return view('admin.register_student', compact('students'));
+        return view('admin.register_student');
     }
 
     /**

@@ -12,7 +12,7 @@ class SubjectController extends Controller
      */
     public function index()
     {
-        $subjects = Subject::all(); 
+        $subjects = Subject::paginate(5); 
         return view("admin.subject-record.subjects_list", compact("subjects"));
     }
 
@@ -30,7 +30,7 @@ class SubjectController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate(
-                        ['schedule' => 'required|string|max:255',
+                        [
                             'name' => 'required|string|max:255|unique:subjects,name'
                             ]);
 
@@ -61,7 +61,7 @@ class SubjectController extends Controller
     public function update(Request $request, Subject $subject)
     {
         $request->validate(
-                ['schedule' => 'required|string|max:255',
+                [
                 'name' => 'required|string|max:255|unique:subjects,name, ' . $subject->id,
                 ]);
 

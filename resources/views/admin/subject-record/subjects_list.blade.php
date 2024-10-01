@@ -13,7 +13,6 @@
             <thead>
                 @include('partials.alerts')
                 <tr>
-                    <th scope="col">Subject Schedule</th>
                     <th scope="col">Subject Name</th>
                     <th scope="col">Students</th>
                     <th scope="col">Actions</th>
@@ -22,7 +21,6 @@
             <tbody>
                 @foreach($subjects as $subject)
                     <tr>
-                        <td>{{ $subject->schedule }}</td>
                         <td>{{ $subject->name }}</td>
                         <td>
                             <ul>
@@ -52,8 +50,6 @@
                                             <form action="{{ route('subjects.update', $subject->id) }}" method="post">
                                                 @csrf
                                                 @method('PUT')
-                                                <label for="code_{{ $subject->id }}" class="form-label">Subject Schedule</label>
-                                                <input type="text" class="form-control" id="code_{{ $subject->id }}" name="schedule" value="{{ $subject->schedule }}"  >
                                                 <label for="name_{{ $subject->id }}" class="form-label">Subject Name</label>
                                                 <input type="text" class="form-control" id="name_{{ $subject->id }}" name="name" value="{{ $subject->name }}"  >
                                                 <div class="modal-footer">
@@ -92,6 +88,9 @@
                 @endforeach
             </tbody>
         </table>
+        <div class="d-flex justify-content-center">
+            {{ $subjects->links('vendor.pagination.bootstrap-5')  }}
+        </div>
     </div>
 </div>
 <!-- Create Subject Modal -->
@@ -105,8 +104,6 @@
             <div class="modal-body">
                 <form action="{{ route('subjects.store') }}" method="post">
                     @csrf
-                    <label for="schedule" class="form-label">Subject Schedule</label>
-                    <input type="text" class="form-control" id="schedule" name="schedule">
                     <label for="name" class="form-label">Subject Name</label>
                     <input type="text" class="form-control" id="name" name="name">
                     <div class="modal-footer">

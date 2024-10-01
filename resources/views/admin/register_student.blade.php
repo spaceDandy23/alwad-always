@@ -11,25 +11,53 @@
         </div>
         <div class="card-body">
             @include('partials.alerts')
-            <form action="{{route('register-tag')}}" method="post" id="stop_auto_submit">
+
+            <div class="border border-dark rounded p-2 mt-4">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <label for="search_student" class="form-label">Search Student</label>
+                    </div>
+                    <div class="col-8">
+                        <input type="text" name="search_student" id="search_student" class="form-control" placeholder="Enter Student">
+                    </div>
+                    <div class="col">
+                        <button id="search_button" class="btn btn-primary">Search</button>
+                    </div>
+                </div>
+            </div>
+            <form action="{{route('register-tag')}}" id="form_register">
                 @csrf
+                <input type="hidden" name="student_id" id="student_id" >
                 <label for="RFID_tag" class="form-label">RFID Tag</label>
                 <input type="number" name="rfid_tag" id="rfid_tag" class="form-control">
-                <label for="student_id" class="form-label">Student ID</label>
-                <select name="student_id" id="student_id" class="form-select">
-                    <option value="">Select Student ID</option>
-                    @foreach($students as $student)
-                        <option value="{{$student->id}}" name="student_id">{{$student->id}}</option>
-                    @endforeach
-                </select>
                 <label for="first_name" class="form-label">First Name</label>
                 <input type="text" name="first_name" id="first_name" class="form-control" readonly>
                 <label for="last_name" class="form-label">Last Name</label>
                 <input type="text" name="last_name" id="last_name" class="form-control" readonly>
+                <label for="middle_name" class="form-label">Middle Name</label>
+                <input type="text" name="middle_name" id="middle_name" class="form-control" readonly>
                 <label for="grade" class="form-label">Grade</label>
-                <input type="text" name="grade" id="grade" class="form-control mb-2" readonly>
+                <input type="text" name="grade" id="grade" class="form-control" readonly>
+                <label for="section" class="form-label">Section</label>
+                <input type="text" name="section" id="section" class="form-control mb-2" readonly>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
+
+
+            <table class="table table-striped">
+                <thead>
+                    <th scope="col">First Name</th>
+                    <th scope="col">Last Name</th>
+                    <th scope="col">Middle Name</th>
+                    <th scope="col">Grade</th>
+                    <th scope="col">Section</th>
+                </thead>
+                <tbody id="students_searched">
+
+
+
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
@@ -40,7 +68,7 @@
 
 
 document.addEventListener('DOMContentLoaded', function() {
-        var form = document.getElementById('stop_auto_submit');
+        var form = document.getElementById('form_register');
         form.addEventListener('keydown', function(event) {
             if (event.key === 'Enter') {
                 event.preventDefault();
@@ -48,26 +76,74 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
 
-        var students = @json($students);
 
-        var studentSelect = document.getElementById('student_id');
-        studentSelect.addEventListener('change', function() {
-            var selectedId = studentSelect.value;
-            if (selectedId) {
-                var selectedStudent = students.find((student) => {
-                    return student.id.toString() === selectedId;
-                });
-                if (selectedStudent) {
-                    document.getElementById('first_name').value = selectedStudent.first_name
-                    document.getElementById('last_name').value = selectedStudent.last_name;
-                    document.getElementById('grade').value = selectedStudent.grade;
+
+        document.getElementById('search_button').addEventListener('click',()=>{
+
+            let searchInput = document.getElementById('search_student').value;
+
+
+            fetch("{{ route('search') }}", {
+
+                method: "POST",
+                headers: {
+                    'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({search: searchInput})
+
+
+            })
+            .then((response) => {
+                return response.json();
+            })
+            .then((data)=> {
+                let studentData = '';
+                if(data.success){
+                    
+                    Object.values(data.results).forEach((values, key) => {
+                        studentData += `
+                                        <tr data-key="${key}" class="student">
+                                        <td>${values.first_name}</td>
+                                        <td>${values.last_name}</td>
+                                        <td>${values.middle_name}</td>
+                                        <td>${values.grade}</td>
+                                        <td>${values.section}</td>
+                                        </tr>`;
+                    });
                 }
-            } else {
-                document.getElementById('first_name').value = '';
-                document.getElementById('last_name').value = '';
-                document.getElementById('grade').value = '';
+
+
+
+
+                document.getElementById('students_searched').innerHTML=studentData;
+                makeClickable(data.results);
+            });
+            function makeClickable(results){
+
+                document.querySelectorAll('.student').forEach((value) => {
+                    value.addEventListener('click', function(){
+                        let student = results[parseInt(this.getAttribute('data-key'),10)];
+
+
+
+                        document.getElementById('student_id').value = student.id;
+                        document.getElementById('first_name').value = student.first_name;
+                        document.getElementById('last_name').value = student.last_name;
+                        document.getElementById('middle_name').value = student.middle_name;
+                        document.getElementById('section').value = student.section;
+                        document.getElementById('grade').value = student.grade;
+                    });
+
+                });
+
             }
+
         });
+
+
+
     });
 </script>
 
