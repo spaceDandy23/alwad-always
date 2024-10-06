@@ -291,16 +291,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             });
         }
-        function removeStudent(){
-            document.querySelectorAll('.student-added').forEach((value) => {
-                value.addEventListener('click', function() {
-                    delete classData[parseInt(this.getAttribute('data-key'),10)];
-                    console.log('test');
-                    generateclassData();
-                    
+        function removeStudent() {
+                document.querySelectorAll('.student-added').forEach((value) => {
+                    value.addEventListener('click', function() {
+                        let key = parseInt(this.getAttribute('data-key'), 10);
+                        delete classData['students'][key]; 
+
+                        console.log('Removed student:', key);
+                        generateclassData(); 
+                    });
                 });
-            });
-        }
+            }
         function generateclassData(){
             let studentsAdded = ``;
             Object.keys(classData['students']).forEach((key) => {

@@ -60,6 +60,7 @@
         }
         else{
             sessionStorage.setItem("{{$subSession->id}}", JSON.stringify(@json($subSessionStudents)));
+            console.log(sessionStorage.getItem(subSessionId));
         }
         loadStoredStudents();
 

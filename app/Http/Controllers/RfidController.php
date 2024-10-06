@@ -18,8 +18,7 @@ class RfidController extends Controller
             $subject = Subject::findOrFail($request->subject_id);
 
             Session::put('subject', $subject);
-
-            foreach ($subject->students as $s) {
+            foreach ($subject->students()->wherePivot('teacher_id', Auth::user()->id)->get() as $s) {
                 $studentsWithPresent[$s->id] = [
                     'id' => $s->id,
                     'present' => false,
@@ -27,7 +26,7 @@ class RfidController extends Controller
                     'last_name' => $s->last_name,
                     'grade' => $s->grade,
                     'section' => $s->section,
-                    'rfid_tag' =>$s->tag->tag_number ?? '',
+                    'rfid_tag' =>$s->tag->tag_number,
                 ];
             }
 
@@ -38,7 +37,7 @@ class RfidController extends Controller
         }
 
         $subSession = Session::get('subject', ''); 
-        $subSessionStudents = $subSession->students;
+        $subSessionStudents = Session::get($subSession->id);
 
         return view('RFID-reader.verify_student', compact('subSession', 'subSessionStudents'));
     }
@@ -81,7 +80,7 @@ class RfidController extends Controller
         }
 
         $studentsAttended = Session::get($subject->id, []);
-        foreach ($subject->students as $s) {
+        foreach ($subject->students()->wherePivot('teacher_id', Auth::user()->id)->get() as $s) {
             $studentsAttended[$s->id] = [
                 'id' => $s->id,
                 'present' => ($s->id === $student->id) ? true : ($studentsAttended[$s->id]['present'] ?? false),

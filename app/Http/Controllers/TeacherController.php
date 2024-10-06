@@ -13,13 +13,16 @@ use Session;
 
 class TeacherController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         $teacher = Auth::user();
-
-        $subjectsWithStudents = $teacher->subjects->mapWithKeys(function ($subject) {
+    
+        $subjectsWithStudents = $teacher->subjects->mapWithKeys(function ($subject) use ($teacher) {
+            $students = $subject->students()->wherePivot('teacher_id', $teacher->id)->get();
+            
             return [$subject->id => [
                 'subject' => $subject,
-                'students' => $subject->students,
+                'students' => $students,
             ]];
         });
     
@@ -42,14 +45,13 @@ class TeacherController extends Controller
 
 
                     
-                Attendance::create([
+                Attendance::firstOrCreate([
                     'date' => now()->toDateString(),
                     'present' => $student['present'],
                     'student_id' => $student['id'],
                     'teacher_id' => Auth::user()->id,
                     'subject_id' => $subject->id,
                 ]);
-                Session::put($id, $studentSubject);
 
                 if(!$student['present']){
                     $strikeIsThree = ($studentObj->strike === 3) ? true : false;
@@ -61,6 +63,7 @@ class TeacherController extends Controller
 
 
             }
+            Session::put($id, $studentSubject);
 
         }
     
@@ -99,12 +102,12 @@ class TeacherController extends Controller
                 ]);
             }
             foreach($validatedData['students'] as $student){
-                $foundStudent = Student::findOrFail($student['id']);
-                StudentSubject::create([
-                    'student_id' => $foundStudent->id,
-                    'subject_id' => $subject->id
-                ]);
 
+                StudentSubject::firstOrCreate([
+                    'student_id' => $student['id'],
+                    'subject_id' => $subject->id,
+                    'teacher_id' => Auth::user()->id,
+                ]);
 
             }
            

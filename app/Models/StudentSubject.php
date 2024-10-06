@@ -11,5 +11,5 @@ class StudentSubject extends Model
     protected $table = 'student_subject';
 
     
-    protected $fillable = ['student_id', 'subject_id'];
+    protected $fillable = ['student_id', 'subject_id','teacher_id'];
 }
