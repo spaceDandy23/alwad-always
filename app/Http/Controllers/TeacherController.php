@@ -23,7 +23,7 @@ class TeacherController extends Controller
             ]];
         });
     
-        return view('teacher.class_views', ['subjectsWithStudents' => $subjectsWithStudents]);
+        return view('teacher.class_views', compact('subjectsWithStudents'));
     }
     public function attendanceRecords(){
         return view('teacher.attendance_record');
@@ -90,12 +90,14 @@ class TeacherController extends Controller
             
             $schedule = "{$validatedData['start_time']['hour']}:{$validatedData['start_time']['minute']} {$validatedData['start_time']['ampm']}-{$validatedData['end_time']['hour']}:{$validatedData['end_time']['minute']} {$validatedData['end_time']['ampm']}";
 
-            // StudentSubject::
-            SubjectTeacher::create([
-                'user_id' => Auth::user()->id,
-                'subject_id' => $subject->id,
-                'schedule' => $schedule
-            ]);
+            if(!SubjectTeacher::where('user_id', Auth::user()->id)
+                                ->where('subject_id', $subject->id)->first()){
+                SubjectTeacher::create([
+                    'user_id' => Auth::user()->id,
+                    'subject_id' => $subject->id,
+                    'schedule' => $schedule
+                ]);
+            }
             foreach($validatedData['students'] as $student){
                 $foundStudent = Student::findOrFail($student['id']);
                 StudentSubject::create([

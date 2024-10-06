@@ -25,7 +25,7 @@
                     </div>
                 </div>
             </div>
-            <form action="{{route('register-tag')}}" id="form_register">
+            <form action="{{route('register-tag')}}" id="form_register" method="POST">
                 @csrf
                 <input type="hidden" name="student_id" id="student_id" >
                 <label for="RFID_tag" class="form-label">RFID Tag</label>

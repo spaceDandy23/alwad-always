@@ -14,7 +14,6 @@
                 @include('partials.alerts')
                 <tr>
                     <th scope="col">Subject Name</th>
-                    <th scope="col">Students</th>
                     <th scope="col">Actions</th>
                 </tr>
             </thead>
@@ -22,13 +21,6 @@
                 @foreach($subjects as $subject)
                     <tr>
                         <td>{{ $subject->name }}</td>
-                        <td>
-                            <ul>
-                                @foreach ($subject->students as $student)
-                                    <li>{{$student->last_name}}, {{$student->first_name}}</li>
-                                @endforeach
-                            </ul>
-                        </td>
                         <td>
                             <a class="btn btn-warning" href="#" data-bs-toggle="modal" data-bs-target="#editSubject{{ $subject->id }}">Edit</a>
                             <form action="{{ route('subjects.destroy', $subject->id) }}" method="post" style="display:inline;">

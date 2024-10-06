@@ -81,6 +81,9 @@ class StudentController extends Controller
             ]);
             $studentId = Student::findOrFail($request->student_id);
 
+            if ($studentId->tag) {
+                return back()->with('error', 'The student already has an RFID tag assigned.');
+            }
             Tag::create([
                 'tag_number' => $request->rfid_tag,
                 'student_id' => $studentId->id,

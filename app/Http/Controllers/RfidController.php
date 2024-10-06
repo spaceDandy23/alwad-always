@@ -27,7 +27,7 @@ class RfidController extends Controller
                     'last_name' => $s->last_name,
                     'grade' => $s->grade,
                     'section' => $s->section,
-                    'rfid_tag' =>$s->tag->tag_number,
+                    'rfid_tag' =>$s->tag->tag_number ?? '',
                 ];
             }
 
