@@ -33,7 +33,7 @@ class AuthController extends Controller
 
                 return redirect()->route('students.index');
             }
-            return redirect()->route('class.index');
+            return redirect()->route('class-index');
 
             
         }

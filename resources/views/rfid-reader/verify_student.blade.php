@@ -3,7 +3,13 @@
 @section('page_title', 'RFID-Reader')
 
 @section('content')
-
+<style>
+    .invisible-input {
+        opacity: 0;
+        position: absolute;
+        z-index: -1;
+    }
+</style>
 
 
 @if (Session::has('subject'))
@@ -21,10 +27,10 @@
 
             <form id='tag_form'>
                 @csrf
-                <label for='rfid_tag' class='form-label'>RFID Tag</label>
-                <input type='text' name='rfid_tag' class='form-control mb-2' id='rfid_field'>
+                <label for='rfid_tag' class='form-label invisible-input'>RFID Tag</label>
+                <input type='number' name='rfid_tag' class='form-control mb-2 invisible-input' id='rfid_field'>
                 <input type="hidden" value="{{ Session::get('subject')->id }}" id="subject_id" name="subject_id">
-                <button class='btn btn-primary' type='submit'>Verify</button>
+                <button class='btn btn-primary invisible-input' type='submit'>Verify</button>
             </form>
 
             <table class="table table-striped">
@@ -49,8 +55,8 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        
         document.getElementById('rfid_field').focus();
-
         let div = document.getElementById('alert');
         const subSessionId = "{{ $subSession->id }}"; 
 
@@ -90,6 +96,7 @@
                     alert(data);
                     updateTextContent(data);
                     generateData(data.studentsAttended);
+                    document.getElementById('rfid_field').focus();
                     sessionStorage.setItem(subSessionId, JSON.stringify(data.studentsAttended));
                 } else {
                     alert(data);
@@ -113,6 +120,7 @@
                 div.className = 'alert alert-danger';
                 div.innerHTML = `<li>${data.message}</li>`;
             }
+            document.getElementById('rfid_field').value = '';
         }
 
         function updateTextContent(data) {
@@ -148,6 +156,7 @@
             });
 
             document.getElementById('students_list').innerHTML = studentsData;
+
         }
 
         function loadStoredStudents() {

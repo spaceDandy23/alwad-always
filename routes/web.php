@@ -39,15 +39,16 @@ Route::middleware('no-cache')->group(function () {
         Route::match(['get', 'post'], 'read', [RfidController::class, 'showSubject'])->name('rfid-reader');
         Route::post('read/subject',[RfidController::class,'verify'])->name('rfid-reader.verify');
 
-        //Teacher User
-        Route::get('class',[TeacherController::class,'index'])->name('class.index');
+        //Teacher User and Add student
+        Route::get('class',[TeacherController::class,'index'])->name('class-index');
+        Route::post('class/add', [TeacherController::class,'addStudentClass'])->name('add-student');
 
         //Attendance logic
         Route::get('attendance', [TeacherController::class, 'attendanceRecords'])->name('attendance');
         Route::post('attendance/store', [TeacherController::class, 'storeAttendance'])->name('store-attendance');
         Route::get('message',[TeacherController::class,'messageParent'])->name('students-strikes');
 
-        //Create Class
+        //Create class 
         Route::match(['post', 'get'], 'create', [TeacherController::class, 'createClass'])->name('create-class');
 
     });

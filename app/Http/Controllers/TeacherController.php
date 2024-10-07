@@ -76,7 +76,20 @@ class TeacherController extends Controller
         $studentsWithStrikes = Student::where('strikes', 3)->get();
         return view('teacher.message_parent', compact('studentsWithStrikes'));
     }
+    public function addStudentClass(Request $request){
+        $studentId = $request->input('student_id');
+        $subjectId = $request->input('subject_id');
 
+        StudentSubject::firstOrCreate([
+            'student_id' => $studentId,
+            'teacher_id' => Auth::user()->id,
+            'subject_id' => $subjectId
+        
+        ]);
+
+        return redirect()->route('class-index')->with('success', 'Student Added Successfully');
+
+    }
     public function createClass(Request $request){
 
         if($request->isMethod('post')){
