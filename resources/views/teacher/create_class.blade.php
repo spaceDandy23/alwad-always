@@ -84,11 +84,13 @@
 
             <table class="table table-striped">
                 <thead>
-                    <th scope="col">First Name</th>
-                    <th scope="col">Last Name</th>
-                    <th scope="col">Middle Name</th>
-                    <th scope="col">Grade</th>
-                    <th scope="col">Section</th>
+                    <tr>
+                        <th scope="col">First Name</th>
+                        <th scope="col">Last Name</th>
+                        <th scope="col">Middle Name</th>
+                        <th scope="col">Grade</th>
+                        <th scope="col">Section</th>
+                    </tr>
                 </thead>
                 <tbody id="students_searched">
 
@@ -96,6 +98,19 @@
 
                 </tbody>
             </table>
+            <div class="row justify-content-center">
+                <div class="col-12 mb-3 text-center">
+                    <p class="small text-muted" id="pagination_caption">
+
+                    </p>
+                </div>
+                
+                <div class="col-12">
+                    <ul id="pagination" class="pagination justify-content-center mb-0">
+
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
     <div class="col-6">
@@ -115,6 +130,7 @@
 
 
             </tbody>
+
 
         </table>
 
@@ -234,10 +250,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     });
 
+    let searchInput = document.getElementById('search_student').value;
     document.getElementById('search_button').addEventListener('click',()=>{
-
-        let searchInput = document.getElementById('search_student').value;
-
+        searchInput = document.getElementById('search_student').value;
 
         fetch("{{ route('search') }}", {
 
@@ -256,68 +271,126 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then((data)=> {
             let studentData = '';
-            if(data.success){
-                
-                Object.values(data.results).forEach((values, key) => {
-                    studentData += `
-                                    <tr data-key="${key}" class="student">
-                                    <td>${values.first_name}</td>
-                                    <td>${values.last_name}</td>
-                                    <td>${values.middle_name}</td>
-                                    <td>${values.grade}</td>
-                                    <td>${values.section}</td>
-                                    </tr>`;
-                });
-            }
-            document.getElementById('students_searched').innerHTML = studentData;
-            makeClickable(data.results);
+            console.log(data.results);
+                if(data.success){
+                    renderSearchedStudents(data.results.data);
+                    renderPaginatedLinks(data.results, searchInput);
+                    makeClickable(data.results.data);
+                }
+
         });
-        function makeClickable(results){
-            document.querySelectorAll('.student').forEach((value) => {
-                value.addEventListener('click', function(){
 
-                    let key = parseInt(this.getAttribute('data-key'),10);
-                    let student = results[key];
-
-                        if(!classData['students']){
-                            classData['students'] = {}
-                        }
-                        classData['students'][key] = student;
-
-
-
-                        console.log(classData);
-                        generateclassData();
-                });
-            });
-        }
-        function removeStudent() {
-                document.querySelectorAll('.student-added').forEach((value) => {
-                    value.addEventListener('click', function() {
-                        let key = parseInt(this.getAttribute('data-key'), 10);
-                        delete classData['students'][key]; 
-
-                        console.log('Removed student:', key);
-                        generateclassData(); 
-                    });
-                });
-            }
-        function generateclassData(){
-            let studentsAdded = ``;
-            Object.keys(classData['students']).forEach((key) => {
-            studentsAdded +=`
-                        <tr data-key="${key}" class="student-added">
-                        <td>${classData['students'][key].first_name}</td>
-                        <td>${classData['students'][key].last_name}</td>
-                        <td>${classData['students'][key].middle_name}</td>
-                        <td>${classData['students'][key].grade}</td>
-                        <td>${classData['students'][key].section}</td>
-                        </tr>`;
-            }); 
-            document.getElementById('students_added').innerHTML= studentsAdded;
-            removeStudent();
-        }
     });
+    const createClassRoute = '{{ route('search') }}';
+    function removeStudent() {
+        document.querySelectorAll('.student-added').forEach((value) => {
+            value.addEventListener('click', function() {
+                let key = parseInt(this.getAttribute('data-key'), 10);
+                delete classData['students'][key]; 
+
+                console.log('Removed student:', key);
+                generateclassData(); 
+            });
+        });
+    }
+    function generateclassData(){
+        let studentsAdded = ``;
+        Object.keys(classData['students']).forEach((key) => {
+        studentsAdded +=`
+                    <tr data-key="${key}" class="student-added">
+                    <td>${classData['students'][key].first_name}</td>
+                    <td>${classData['students'][key].last_name}</td>
+                    <td>${classData['students'][key].middle_name}</td>
+                    <td>${classData['students'][key].grade}</td>
+                    <td>${classData['students'][key].section}</td>
+                    </tr>`;
+        }); 
+        document.getElementById('students_added').innerHTML= studentsAdded;
+        removeStudent();
+    }
+    function renderPaginatedLinks(paginationData, searchQuery = '') {
+        const paginationElement = document.getElementById('pagination');
+        const paginationCaption = document.getElementById('pagination_caption');
+        paginationElement.innerHTML = '';
+
+        if (paginationData.prev_page_url) {
+            const prevButton = `<li class="page-item"><a class="page-link" href="#" onclick="loadPage('${paginationData.prev_page_url}&search=${encodeURIComponent(searchQuery)}')">Previous</a></li>`;
+            paginationElement.innerHTML += prevButton;
+        }
+
+        for (let i = 1; i <= paginationData.last_page; i++) {
+            const activeClass = (paginationData.current_page === i) ? 'active' : '';
+            const pageButton = `<li class="page-item ${activeClass}"><a class="page-link" href="#" onclick="loadPage('${paginationData.path}?page=${i}&search=${encodeURIComponent(searchQuery)}')">${i}</a></li>`;
+            paginationElement.innerHTML += pageButton;
+        }
+
+        if (paginationData.next_page_url) {
+            const nextButton = `<li class="page-item"><a class="page-link" href="#" onclick="loadPage('${paginationData.next_page_url}&search=${encodeURIComponent(searchQuery)}')">Next</a></li>`;
+            paginationElement.innerHTML += nextButton;
+        }
+        paginationCaption.innerHTML = `Showing <span class="fw-semibold">${paginationData.from}</span>
+                                            to <span class="fw-semibold">${paginationData.to}</span>
+                                            of <span class="fw-semibold">${paginationData.total}</span>`;
+    }
+
+    function renderSearchedStudents(data){
+            let studentData = ``;
+            Object.values(data).forEach((values, key) => {
+                        studentData += `
+                                        <tr data-key="${key}" class="student">
+                                        <td>${values.first_name}</td>
+                                        <td>${values.last_name}</td>
+                                        <td>${values.middle_name}</td>
+                                        <td>${values.grade}</td>
+                                        <td>${values.section}</td>
+                                        </tr>`;
+                    });
+            document.getElementById('students_searched').innerHTML = studentData;
+    }
+    function makeClickable(results){
+        document.querySelectorAll('.student').forEach((value) => {
+            value.addEventListener('click', function(){
+
+                let key = parseInt(this.getAttribute('data-key'),10);
+                let student = results[key];
+
+                    if(!classData['students']){
+                        classData['students'] = {}
+                    }
+                    classData['students'][key] = student;
+
+
+
+                    console.log(classData);
+                    generateclassData();
+            });
+        });
+    }
+    window.loadPage = function(url) {
+        fetch(url, {
+            method: 'POST', 
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ search: searchInput })
+        })
+        .then((response) => {
+            return response.json();
+        })
+        .then((data) => {
+            if(data.success){
+                console.log(data.results);
+                renderSearchedStudents(data.results.data);
+                renderPaginatedLinks(data.results, searchInput);
+                makeClickable(data.results.data);
+            }
+
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+    };
 });
 
 </script>

@@ -104,7 +104,15 @@ class TeacherController extends Controller
 
             $subject = Subject::findOrFail($validatedData['subject']);
             
-            $schedule = "{$validatedData['start_time']['hour']}:{$validatedData['start_time']['minute']} {$validatedData['start_time']['ampm']}-{$validatedData['end_time']['hour']}:{$validatedData['end_time']['minute']} {$validatedData['end_time']['ampm']}";
+            $schedule = sprintf(
+                "%02d:%02d %s - %02d:%02d %s",
+                $validatedData['start_time']['hour'],
+                $validatedData['start_time']['minute'],
+                $validatedData['start_time']['ampm'],
+                $validatedData['end_time']['hour'],
+                $validatedData['end_time']['minute'],
+                $validatedData['end_time']['ampm']
+            );
 
             if(!SubjectTeacher::where('user_id', Auth::user()->id)
                                 ->where('subject_id', $subject->id)->first()){

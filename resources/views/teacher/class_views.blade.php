@@ -100,77 +100,80 @@
                     </div>
                 </div>
             </div>
-
         @endforeach
     </div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function(){
+    let searchButton = document.getElementById('search_button');
 
-    document.getElementById('search_button').addEventListener('click',()=>{
+    if(searchButton){
+        searchButton.addEventListener('click',()=>{
 
-        let searchInput = document.getElementById('search_student').value;
-
-
-        fetch("{{ route('search') }}", {
-
-            method: "POST",
-            headers: {
-                'X-CSRF-TOKEN': "{{ csrf_token() }}",
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({search: searchInput})
+            let searchInput = document.getElementById('search_student').value;
 
 
-        })
-        .then((response) => {
-            return response.json();
-        })
-        .then((data) => {
-            if(data.success){
-                let studentData = '';
-                Object.values(data.results).forEach((values, key) => {
-                    studentData += `
-                                    <tr data-key="${key}" class="student">
-                                    <td>${values.first_name}</td>
-                                    <td>${values.last_name}</td>
-                                    <td>${values.middle_name}</td>
-                                    <td>${values.grade}</td>
-                                    <td>${values.section}</td>
-                                    </tr>`;
+            fetch("{{ route('search') }}", {
+
+                method: "POST",
+                headers: {
+                    'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({search: searchInput})
+
+
+            })
+            .then((response) => {
+                return response.json();
+            })
+            .then((data) => {
+                if(data.success){
+                    let studentData = '';
+                    Object.values(data.results).forEach((values, key) => {
+                        studentData += `
+                                        <tr data-key="${key}" class="student">
+                                        <td>${values.first_name}</td>
+                                        <td>${values.last_name}</td>
+                                        <td>${values.middle_name}</td>
+                                        <td>${values.grade}</td>
+                                        <td>${values.section}</td>
+                                        </tr>`;
+                    });
+                    
+                    document.getElementById('students_searched').innerHTML = studentData;
+                    clickStudent(data.results);
+                }
+
+            });
+            function clickStudent(students){
+
+                document.querySelectorAll('.student').forEach((values) => {
+                    values.addEventListener('click', function() {
+
+                        console.log('clcik');
+                        let student = students[parseInt(this.getAttribute('data-key'),10)];
+
+
+                        document.getElementById('student_id').value = student.id;
+                        document.getElementById('first_name').value = student.first_name;
+                        document.getElementById('last_name').value = student.last_name;
+                        document.getElementById('middle_name').value = student.middle_name;
+                        document.getElementById('section').value = student.section;
+                        document.getElementById('grade').value = student.grade;
+
+                    });
+
                 });
-                
-                document.getElementById('students_searched').innerHTML = studentData;
-                clickStudent(data.results);
+
+
             }
 
         });
-        function clickStudent(students){
+    }
 
-            document.querySelectorAll('.student').forEach((values) => {
-                values.addEventListener('click', function() {
-
-                    console.log('clcik');
-                    let student = students[parseInt(this.getAttribute('data-key'),10)];
-
-
-                    document.getElementById('student_id').value = student.id;
-                    document.getElementById('first_name').value = student.first_name;
-                    document.getElementById('last_name').value = student.last_name;
-                    document.getElementById('middle_name').value = student.middle_name;
-                    document.getElementById('section').value = student.section;
-                    document.getElementById('grade').value = student.grade;
-
-                });
-
-            });
-
-
-        }
-
-    });
 });
 
 

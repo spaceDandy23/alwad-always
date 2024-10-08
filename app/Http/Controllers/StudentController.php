@@ -66,7 +66,7 @@ class StudentController extends Controller
 
         return response()->json([
             'success' => true,
-            'results' => $studentQuery->get(),
+            'results' => $studentQuery->paginate(20),
         ]);
 
 
