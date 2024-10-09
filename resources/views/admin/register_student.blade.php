@@ -62,89 +62,19 @@
     </div>
 </div>
 
-
-
 <script>
+    const routes = {
+        search: "{{ route('search') }}",
+        csrfToken: "{{ csrf_token() }}",
+
+    };
+</script>
 
 
-document.addEventListener('DOMContentLoaded', function() {
-        var form = document.getElementById('form_register');
-        form.addEventListener('keydown', function(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-            }
-        });
-
-
-
-
-        document.getElementById('search_button').addEventListener('click',()=>{
-
-            let searchInput = document.getElementById('search_student').value;
-
-
-            fetch("{{ route('search') }}", {
-
-                method: "POST",
-                headers: {
-                    'X-CSRF-TOKEN': "{{ csrf_token() }}",
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({search: searchInput})
-
-
-            })
-            .then((response) => {
-                return response.json();
-            })
-            .then((data)=> {
-                let studentData = '';
-                if(data.success){
-                    
-                    Object.values(data.results).forEach((values, key) => {
-                        studentData += `
-                                        <tr data-key="${key}" class="student">
-                                        <td>${values.first_name}</td>
-                                        <td>${values.last_name}</td>
-                                        <td>${values.middle_name}</td>
-                                        <td>${values.grade}</td>
-                                        <td>${values.section}</td>
-                                        </tr>`;
-                    });
-                }
+<script type="module" src="{{ asset('js/registerStudent.js') }}">
 
 
 
-
-                document.getElementById('students_searched').innerHTML=studentData;
-                makeClickable(data.results);
-            });
-            function makeClickable(results){
-
-                document.querySelectorAll('.student').forEach((value) => {
-                    value.addEventListener('click', function(){
-                        let student = results[parseInt(this.getAttribute('data-key'),10)];
-
-
-
-                        document.getElementById('student_id').value = student.id;
-                        document.getElementById('first_name').value = student.first_name;
-                        document.getElementById('last_name').value = student.last_name;
-                        document.getElementById('middle_name').value = student.middle_name;
-                        document.getElementById('section').value = student.section;
-                        document.getElementById('grade').value = student.grade;
-                    });
-
-                });
-
-            }
-
-        });
-
-
-
-    });
 </script>
 
 @endsection

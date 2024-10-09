@@ -47,6 +47,7 @@
 </div>
 
 <script>
+    console.log(JSON.parse(sessionStorage.getItem('17')));
     document.addEventListener('DOMContentLoaded', function() {
     let studentFormInputs = '';
     let students = '';
@@ -94,7 +95,7 @@
             sessionStorage.setItem(subjectId, JSON.stringify(sessionData));
 
 
-
+            sessionStorage.setItem('changed', JSON.stringify(true));
             console.log(`Updated session for Student ID: ${studentId}, Subject ID: ${subjectId}, Present: ${presentValue}`);
         });
     });
@@ -126,6 +127,7 @@
             const studentForm = student.querySelector('.form-select');
             presentStatuses[studentId] = studentForm.value;
         });
+        
 
         fetch(url, {
             method: "POST",

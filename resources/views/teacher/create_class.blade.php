@@ -10,6 +10,9 @@
 @section('page_title', 'Create Class')
 <div class="row"> 
     <div class="card col-6 px-0">
+        <div id="alert">
+            
+        </div>
         <div class="card-header text-center">
             <h3>Create Class</h3>
         </div>
@@ -136,262 +139,19 @@
 
     </div>
 </div>
-
 <script>
-
-
-document.addEventListener('DOMContentLoaded', function() {
-
-    let classData = {};
-    getDefaultTimeSub();
-    changeTitle();
-    document.getElementById('start_hour').addEventListener('change', storeStartTime);
-    document.getElementById('start_minute').addEventListener('change', storeStartTime);
-    document.getElementById('start_ampm').addEventListener('change', storeStartTime);
-    document.getElementById('end_hour').addEventListener('change', storeEndTime);
-    document.getElementById('end_minute').addEventListener('change', storeEndTime);
-    document.getElementById('end_ampm').addEventListener('change', storeEndTime);
-
-
-    function changeTitle(){
-        let selectElement = document.getElementById('subject');
-        let selectedIndex = selectElement.selectedIndex;
-
-        document.getElementById('subject_title').textContent = selectElement.options[selectedIndex].text;
-
-        selectElement.addEventListener('change', function() {
-        document.getElementById('subject_title').textContent = this.options[this.selectedIndex].text;
-        classData['subject'] = this.value;
-        });
-    }
-
-
-
-    function getDefaultTimeSub(){
-        const startHour = document.getElementById('start_hour').value;
-        const startMinute = document.getElementById('start_minute').value;
-        const startAmpm = document.getElementById('start_ampm').value;
-
-        classData['start_time'] = {
-            hour: startHour,
-            minute: startMinute,
-            ampm: startAmpm
-        };
-        const endHour = document.getElementById('end_hour').value;
-        const endMinute = document.getElementById('end_minute').value;
-        const endAmpm = document.getElementById('end_ampm').value;
-
-        classData['end_time'] = {
-            hour: endHour,
-            minute: endMinute,
-            ampm: endAmpm
-        };
-        console.log(classData);
-    }
-
-
-    function storeStartTime() {
-        const startHour = document.getElementById('start_hour').value;
-        const startMinute = document.getElementById('start_minute').value;
-        const startAmpm = document.getElementById('start_ampm').value;
-
-        classData['start_time'] = {
-            hour: startHour,
-            minute: startMinute,
-            ampm: startAmpm
-        };
-
-        console.log('Start Time:', classData['start_time']); 
-    }
-
-    function storeEndTime() {
-        const endHour = document.getElementById('end_hour').value;
-        const endMinute = document.getElementById('end_minute').value;
-        const endAmpm = document.getElementById('end_ampm').value;
-
-        classData['end_time'] = {
-            hour: endHour,
-            minute: endMinute,
-            ampm: endAmpm
-        };
-
-        console.log('End Time:', classData['end_time']); 
-    }
-
-    document.getElementById('send_data').addEventListener('click', () =>{
-
-        fetch("{{route('create-class')}}", {
-
-            method: "POSt",
-            headers: {
-                'X-CSRF-TOKEN': "{{ csrf_token() }}",
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(classData)
-
-
-        })
-        .then((response) => {
-            return response.json();
-        })
-        .then((data) => {
-            if(data.success){
-                console.log(data.success);
-            }
-            else{
-                console.log(data.message);
-            }
-        })
-        .catch((error) => {
-            console.log(error);
-        });
+    const routes = {
+        search: "{{ route('search') }}",
+        createClass: "{{ route('create-class') }}",
+        csrfToken: "{{ csrf_token() }}",
     
-
-    });
-
-    let searchInput = document.getElementById('search_student').value;
-    document.getElementById('search_button').addEventListener('click',()=>{
-        searchInput = document.getElementById('search_student').value;
-
-        fetch("{{ route('search') }}", {
-
-            method: "POST",
-            headers: {
-                'X-CSRF-TOKEN': "{{ csrf_token() }}",
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({search: searchInput})
-
-
-        })
-        .then((response) => {
-            return response.json();
-        })
-        .then((data)=> {
-            let studentData = '';
-            console.log(data.results);
-                if(data.success){
-                    renderSearchedStudents(data.results.data);
-                    renderPaginatedLinks(data.results, searchInput);
-                    makeClickable(data.results.data);
-                }
-
-        });
-
-    });
-    const createClassRoute = '{{ route('search') }}';
-    function removeStudent() {
-        document.querySelectorAll('.student-added').forEach((value) => {
-            value.addEventListener('click', function() {
-                let key = parseInt(this.getAttribute('data-key'), 10);
-                delete classData['students'][key]; 
-
-                console.log('Removed student:', key);
-                generateclassData(); 
-            });
-        });
-    }
-    function generateclassData(){
-        let studentsAdded = ``;
-        Object.keys(classData['students']).forEach((key) => {
-        studentsAdded +=`
-                    <tr data-key="${key}" class="student-added">
-                    <td>${classData['students'][key].first_name}</td>
-                    <td>${classData['students'][key].last_name}</td>
-                    <td>${classData['students'][key].middle_name}</td>
-                    <td>${classData['students'][key].grade}</td>
-                    <td>${classData['students'][key].section}</td>
-                    </tr>`;
-        }); 
-        document.getElementById('students_added').innerHTML= studentsAdded;
-        removeStudent();
-    }
-    function renderPaginatedLinks(paginationData, searchQuery = '') {
-        const paginationElement = document.getElementById('pagination');
-        const paginationCaption = document.getElementById('pagination_caption');
-        paginationElement.innerHTML = '';
-
-        if (paginationData.prev_page_url) {
-            const prevButton = `<li class="page-item"><a class="page-link" href="#" onclick="loadPage('${paginationData.prev_page_url}&search=${encodeURIComponent(searchQuery)}')">Previous</a></li>`;
-            paginationElement.innerHTML += prevButton;
-        }
-
-        for (let i = 1; i <= paginationData.last_page; i++) {
-            const activeClass = (paginationData.current_page === i) ? 'active' : '';
-            const pageButton = `<li class="page-item ${activeClass}"><a class="page-link" href="#" onclick="loadPage('${paginationData.path}?page=${i}&search=${encodeURIComponent(searchQuery)}')">${i}</a></li>`;
-            paginationElement.innerHTML += pageButton;
-        }
-
-        if (paginationData.next_page_url) {
-            const nextButton = `<li class="page-item"><a class="page-link" href="#" onclick="loadPage('${paginationData.next_page_url}&search=${encodeURIComponent(searchQuery)}')">Next</a></li>`;
-            paginationElement.innerHTML += nextButton;
-        }
-        paginationCaption.innerHTML = `Showing <span class="fw-semibold">${paginationData.from}</span>
-                                            to <span class="fw-semibold">${paginationData.to}</span>
-                                            of <span class="fw-semibold">${paginationData.total}</span>`;
-    }
-
-    function renderSearchedStudents(data){
-            let studentData = ``;
-            Object.values(data).forEach((values, key) => {
-                        studentData += `
-                                        <tr data-key="${key}" class="student">
-                                        <td>${values.first_name}</td>
-                                        <td>${values.last_name}</td>
-                                        <td>${values.middle_name}</td>
-                                        <td>${values.grade}</td>
-                                        <td>${values.section}</td>
-                                        </tr>`;
-                    });
-            document.getElementById('students_searched').innerHTML = studentData;
-    }
-    function makeClickable(results){
-        document.querySelectorAll('.student').forEach((value) => {
-            value.addEventListener('click', function(){
-
-                let key = parseInt(this.getAttribute('data-key'),10);
-                let student = results[key];
-
-                    if(!classData['students']){
-                        classData['students'] = {}
-                    }
-                    classData['students'][key] = student;
-
-
-
-                    console.log(classData);
-                    generateclassData();
-            });
-        });
-    }
-    window.loadPage = function(url) {
-        fetch(url, {
-            method: 'POST', 
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({ search: searchInput })
-        })
-        .then((response) => {
-            return response.json();
-        })
-        .then((data) => {
-            if(data.success){
-                console.log(data.results);
-                renderSearchedStudents(data.results.data);
-                renderPaginatedLinks(data.results, searchInput);
-                makeClickable(data.results.data);
-            }
-
-        })
-        .catch((error) => {
-            console.error(error);
-        });
     };
-});
+</script>
+
+<script type="module" src="{{ asset('js/createClass.js') }}">
+
+
+
 
 </script>
 

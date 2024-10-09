@@ -14,7 +14,7 @@
                 <form action="{{ route('rfid-reader') }}" method="post" class="mr-2">
                     @csrf
                     <input type="hidden" value="{{ $subjectId }}" name="subject_id">
-                    <button type="submit" class="btn btn-primary mx-4">Check Attendance {{ $subjectId }}</button>
+                    <button type="submit" class="btn btn-primary mx-4" id="check_attendance">Check Attendance {{ $subjectId }}</button>
                 </form>
                 <button type="button" class="btn btn-secondary mx-4" data-bs-toggle="modal" data-bs-target="#createStudentModal{{ $subjectId }}">
                     Add Student
@@ -76,6 +76,19 @@
 
                                     </tbody>
                                 </table>
+                                <div class="row justify-content-center">
+                                    <div class="col-12 mb-3 text-center">
+                                        <p class="small text-muted" id="pagination_caption">
+
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="col-12">
+                                        <ul id="pagination" class="pagination justify-content-center mb-0">
+
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                             <form action="{{ route('add-student') }}" method="post">
                                 @csrf
@@ -103,78 +116,20 @@
         @endforeach
     </div>
 </div>
-
 <script>
-document.addEventListener('DOMContentLoaded', function(){
-    let searchButton = document.getElementById('search_button');
 
-    if(searchButton){
-        searchButton.addEventListener('click',()=>{
+    if(JSON.parse(sessionStorage.getItem("checkAttendance"))){
 
-            let searchInput = document.getElementById('search_student').value;
+        document.getElementById('check_attendance').style.display = 'none';
 
+        }
+    const routes = {
+        search: "{{ route('search') }}",
+        csrfToken: "{{ csrf_token() }}",
 
-            fetch("{{ route('search') }}", {
-
-                method: "POST",
-                headers: {
-                    'X-CSRF-TOKEN': "{{ csrf_token() }}",
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({search: searchInput})
-
-
-            })
-            .then((response) => {
-                return response.json();
-            })
-            .then((data) => {
-                if(data.success){
-                    let studentData = '';
-                    Object.values(data.results).forEach((values, key) => {
-                        studentData += `
-                                        <tr data-key="${key}" class="student">
-                                        <td>${values.first_name}</td>
-                                        <td>${values.last_name}</td>
-                                        <td>${values.middle_name}</td>
-                                        <td>${values.grade}</td>
-                                        <td>${values.section}</td>
-                                        </tr>`;
-                    });
-                    
-                    document.getElementById('students_searched').innerHTML = studentData;
-                    clickStudent(data.results);
-                }
-
-            });
-            function clickStudent(students){
-
-                document.querySelectorAll('.student').forEach((values) => {
-                    values.addEventListener('click', function() {
-
-                        console.log('clcik');
-                        let student = students[parseInt(this.getAttribute('data-key'),10)];
-
-
-                        document.getElementById('student_id').value = student.id;
-                        document.getElementById('first_name').value = student.first_name;
-                        document.getElementById('last_name').value = student.last_name;
-                        document.getElementById('middle_name').value = student.middle_name;
-                        document.getElementById('section').value = student.section;
-                        document.getElementById('grade').value = student.grade;
-
-                    });
-
-                });
-
-
-            }
-
-        });
-    }
-
-});
+    };
+</script>
+<script type="module" src="{{ asset('js/classAddStudent.js') }}">
 
 
 </script>

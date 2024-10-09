@@ -55,19 +55,16 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        
         document.getElementById('rfid_field').focus();
         let div = document.getElementById('alert');
         const subSessionId = "{{ $subSession->id }}"; 
 
+            if(!sessionStorage.getItem('changed')){
+                sessionStorage.setItem("{{$subSession->id}}", JSON.stringify(@json($subSessionStudents)));
+            }
 
-        if(sessionStorage.getItem(subSessionId)){
-            console.log('true');
-        }
-        else{
-            sessionStorage.setItem("{{$subSession->id}}", JSON.stringify(@json($subSessionStudents)));
-            console.log(sessionStorage.getItem(subSessionId));
-        }
+            sessionStorage.setItem("checkAttendance", JSON.stringify(true));
+
         loadStoredStudents();
 
         document.getElementById('tag_form').addEventListener('submit', (event) => {
@@ -78,7 +75,7 @@
 
             
             if(!checkIfExist(formData)){
-                alert({}, 'Student Already Attended');
+                alertNotif({}, 'Student Already Attended');
                 return;
             }
 
@@ -93,13 +90,13 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert(data);
+                    alertNotif(data);
                     updateTextContent(data);
                     generateData(data.studentsAttended);
                     document.getElementById('rfid_field').focus();
                     sessionStorage.setItem(subSessionId, JSON.stringify(data.studentsAttended));
                 } else {
-                    alert(data);
+                    alertNotif(data);
                     clearTextContent();
                     console.error('Student not found or other error');
                 }
@@ -109,7 +106,7 @@
             });
         });
 
-        function alert(data, message = '') {
+        function alertNotif(data, message = '') {
             if(message) {
                 div.className = 'alert alert-warning';
                 div.innerHTML = `<li>${message}</li>`;
